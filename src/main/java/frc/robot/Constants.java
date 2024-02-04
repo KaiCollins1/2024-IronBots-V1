@@ -23,6 +23,7 @@ public final class Constants {
     public static final int kMaxDrtiveMotorOutput_Volts = 10;
   }
   public static class DriveSubsystemConstants {
+    
     //feedforward constants
     public static final double kS = 0;
     public static final double kV = 0;
@@ -47,5 +48,10 @@ public final class Constants {
     public static final double kTrackWidth_M = Units.inchesToMeters(21.869);
     public static final boolean kIsLeftInverted = false;
     public static final boolean kIsRightInverted = false;
+    //meters per second max velocity when at full throttle, and radians per second max rotation when at full throttle
+    public static final double kMaxDriveVelocity_Mps = 0;
+    public static final double kMaxDriveRotations_Radps = 0 * 2 * Math.PI;
+    //max current for driving
+    public static final int kMotorCurrentLimit = 50;
   }
 }
