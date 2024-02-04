@@ -18,6 +18,10 @@ public final class Constants {
   public static class ControllerConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class AutonConstants {
+    public static final int kMaxDrtiveMotorOutput_Volts = 10;
+  }
   public static class DriveSubsystemConstants {
     //feedforward constants
     public static final double kS = 0;
@@ -40,7 +44,6 @@ public final class Constants {
     public static final int kLeftBackMotorID = 0;
     public static final int kRightFrontMotorID = 0;
     public static final int kRightBackMotorID = 0;
-    public static final int kMaxMotorOutput_Volts = 10;
     public static final double kTrackWidth_M = Units.inchesToMeters(21.869);
     public static final boolean kIsLeftInverted = false;
     public static final boolean kIsRightInverted = false;

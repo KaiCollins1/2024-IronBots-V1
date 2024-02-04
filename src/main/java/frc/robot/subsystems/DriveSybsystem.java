@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -11,9 +12,13 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveSubsystemConstants;
@@ -39,7 +44,10 @@ private RelativeEncoder leftBackEncoder;
 private RelativeEncoder rightFrontEncoder;
 private RelativeEncoder rightBackEncoder;
 
+AHRS gyro = new AHRS(SPI.Port.kMXP);
 
+DifferentialDriveOdometry driveOdometry;
+Pose2d drivePose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
 
 
   /** Creates a new DriveSybsystem. */
@@ -87,56 +95,54 @@ private RelativeEncoder rightBackEncoder;
     leftBackEncoder.setPosition(0);
     rightFrontEncoder.setPosition(0);
     rightBackEncoder.setPosition(0);
-    //if(recalcOdometry) driveOdometry.calculate(gyro.getRotation2d(), 0, 0, drivePose);
+    if(recalcOdometry) driveOdometry.resetPosition(gyro.getRotation2d(), 0, 0, drivePose);
   }
 
-  //get average values of encoders
+  //get average (avg) values of encoders
   public double getAvgLeftPosition() {
-    return (leftFrontEncoder.getPosition()+leftBackEncoder.getPosition())/2;
+    return (leftFrontEncoder.getPosition() + leftBackEncoder.getPosition()) / 2;
   }
 
   public double getAvgLeftVelocity() {
-    return (leftFrontEncoder.getVelocity()+leftBackEncoder.getVelocity())/2;
+    return (leftFrontEncoder.getVelocity() + leftBackEncoder.getVelocity()) / 2;
   }
 
   public double getAvgRightPosition() {
-    return (rightFrontEncoder.getPosition()+rightBackEncoder.getPosition())/2;
+    return (rightFrontEncoder.getPosition() + rightBackEncoder.getPosition()) / 2;
   }
 
   public double getAvgRightVelocity() {
-    return (rightFrontEncoder.getVelocity()+rightBackEncoder.getVelocity())/2;
+    return (rightFrontEncoder.getVelocity() + rightBackEncoder.getVelocity()) / 2;
+  }
+
+  public void zeroGyro(boolean recalcOdometry) {
+    gyro.reset();
+    if(recalcOdometry) driveOdometry.resetPosition(new Rotation2d(0), this.getAvgLeftPosition(), this.getAvgRightPosition(), drivePose);
   }
 
 
   public void chassisSpeedDrive(ChassisSpeeds speed) {
+
     leftFrontMotor.setVoltage(
-      DriveSubsystemConstants.kMaxMotorOutput_Volts* 
-      MathUtil.clamp(
-        driveFeedforward.calculate(
-          driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond
-        )+
-        rightDrivePidController.calculate(
-          getAvgLeftVelocity(), 
-          driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond
-        ),
-        -1,
-        1
+      driveFeedforward.calculate(
+        driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond
+      )+
+      leftDrivePidController.calculate(
+        getAvgLeftVelocity(), 
+        driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond
       )
     );
 
     rightFrontMotor.setVoltage(
-      DriveSubsystemConstants.kMaxMotorOutput_Volts* 
-      MathUtil.clamp(
-        driveFeedforward.calculate(
-          driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond
-        )+
-        rightDrivePidController.calculate(
-          getAvgLeftVelocity(), 
-          driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond
-        ),
-        -1,
-        1
+      driveFeedforward.calculate(
+        driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond
+      )+
+      rightDrivePidController.calculate(
+        getAvgLeftVelocity(), 
+        driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond
       )
     );
+    
   }
+
 }
