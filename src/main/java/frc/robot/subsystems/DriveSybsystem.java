@@ -21,6 +21,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveSubsystemConstants;
 
@@ -102,19 +104,40 @@ private Pose2d drivePose = new Pose2d(new Translation2d(0,0), new Rotation2d(0))
     drivePose = driveOdometry.update(gyro.getRotation2d(), this.getAvgLeftPosition(), this.getAvgRightPosition());
   }
 
-  public void smartArcadeDrive(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
-    chassisSpeedDrive(
-      new ChassisSpeeds(
-        DriveSubsystemConstants.kMaxDriveVelocity_Mps * fwdSupplier.getAsDouble(),
-        0, //vy is always zero because we use tank drive and it cannot move sideways
-        DriveSubsystemConstants.kMaxDriveRotations_Radps * rotSupplier.getAsDouble()
+  public Command smartArcadeDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
+    return run(
+      () -> this.chassisSpeedDrive(
+        new ChassisSpeeds(
+          DriveSubsystemConstants.kMaxDriveVelocity_Mps * fwdSupplier.getAsDouble(),
+          0, //vy is always zero because we use tank drive and it cannot move sideways
+          DriveSubsystemConstants.kMaxDriveRotations_Radps * rotSupplier.getAsDouble()
+        )
       )
-    );
+    ).withName("smartArcadeDrive");
   }
 
-  public void dumbArcadeDrive(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
-    drive.arcadeDrive(fwdSupplier.getAsDouble(), rotSupplier.getAsDouble());
+  public Command dumbArcadeDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
+    return run(
+      () -> drive.arcadeDrive(
+        fwdSupplier.getAsDouble(), 
+        rotSupplier.getAsDouble()
+      )
+    ).withName("smartArcadeDrive");
   }
+
+  // private void smartArcadeDrive(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
+  //   this.chassisSpeedDrive(
+  //     new ChassisSpeeds(
+  //       DriveSubsystemConstants.kMaxDriveVelocity_Mps * fwdSupplier.getAsDouble(),
+  //       0, //vy is always zero because we use tank drive and it cannot move sideways
+  //       DriveSubsystemConstants.kMaxDriveRotations_Radps * rotSupplier.getAsDouble()
+  //     )
+  //   );
+  // }
+
+  // private void dumbArcadeDrive(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
+  //   drive.arcadeDrive(fwdSupplier.getAsDouble(), rotSupplier.getAsDouble());
+  // }
 
   public void chassisSpeedDrive(ChassisSpeeds speed) {
 
