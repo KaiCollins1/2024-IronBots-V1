@@ -29,7 +29,8 @@ private CANSparkMax rightBackMotor = new CANSparkMax(DriveSubsystemConstants.kRi
 
 private DifferentialDrive drive;
 
-private PIDController drivePidController = new PIDController(DriveSubsystemConstants.kP, 0, DriveSubsystemConstants.kD);
+private PIDController leftDrivePidController = new PIDController(DriveSubsystemConstants.kP, 0, DriveSubsystemConstants.kD);
+private PIDController rightDrivePidController = new PIDController(DriveSubsystemConstants.kP, 0, DriveSubsystemConstants.kD);
 private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(DriveSubsystemConstants.kS, DriveSubsystemConstants.kV, DriveSubsystemConstants.kA);
 private DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(DriveSubsystemConstants.kTrackWidth_M);
 
@@ -37,6 +38,8 @@ private RelativeEncoder leftFrontEncoder;
 private RelativeEncoder leftBackEncoder;
 private RelativeEncoder rightFrontEncoder;
 private RelativeEncoder rightBackEncoder;
+
+
 
 
   /** Creates a new DriveSybsystem. */
@@ -69,7 +72,7 @@ private RelativeEncoder rightBackEncoder;
     leftBackEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
     rightBackEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
 
-    this.zeroEncoders();
+    this.zeroEncoders(false);
 
   }
 
@@ -79,35 +82,61 @@ private RelativeEncoder rightBackEncoder;
   }
 
   //reset all of the encoders to zero
-  public void zeroEncoders() {
+  public void zeroEncoders(boolean recalcOdometry) {
     leftFrontEncoder.setPosition(0);
     leftBackEncoder.setPosition(0);
     rightFrontEncoder.setPosition(0);
     rightBackEncoder.setPosition(0);
+    //if(recalcOdometry) driveOdometry.calculate(gyro.getRotation2d(), 0, 0, drivePose);
   }
 
+  //get average values of encoders
   public double getAvgLeftPosition() {
     return (leftFrontEncoder.getPosition()+leftBackEncoder.getPosition())/2;
   }
+
   public double getAvgLeftVelocity() {
     return (leftFrontEncoder.getVelocity()+leftBackEncoder.getVelocity())/2;
   }
+
   public double getAvgRightPosition() {
     return (rightFrontEncoder.getPosition()+rightBackEncoder.getPosition())/2;
   }
+
   public double getAvgRightVelocity() {
     return (rightFrontEncoder.getVelocity()+rightBackEncoder.getVelocity())/2;
   }
 
 
-  // public void chassisSpeedDrive(ChassisSpeeds speedObject) {
-  //   leftFrontMotor.setVoltage(
-  //     DriveSubsystemConstants.kMaxMotorOutput_Volts * 
-  //     MathUtil.clamp(
-  //       driveFeedforward.calculate(driveKinematics.toWheelSpeeds(speedObject).leftMetersPerSecond)
-  //       + drivePidController.calculate(),
-  //       -1,
-  //       1)
-  //   );
-  // }
+  public void chassisSpeedDrive(ChassisSpeeds speed) {
+    leftFrontMotor.setVoltage(
+      DriveSubsystemConstants.kMaxMotorOutput_Volts* 
+      MathUtil.clamp(
+        driveFeedforward.calculate(
+          driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond
+        )+
+        rightDrivePidController.calculate(
+          getAvgLeftVelocity(), 
+          driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond
+        ),
+        -1,
+        1
+      )
+    );
+
+    rightFrontMotor.setVoltage(
+      DriveSubsystemConstants.kMaxMotorOutput_Volts* 
+      MathUtil.clamp(
+        driveFeedforward.calculate(
+          driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond
+        )+
+        rightDrivePidController.calculate(
+          getAvgLeftVelocity(), 
+          driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond
+        ),
+        -1,
+        1
+      )
+    );
+  }
 }
