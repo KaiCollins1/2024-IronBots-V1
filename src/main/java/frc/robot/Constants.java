@@ -42,5 +42,7 @@ public final class Constants {
     public static final int kRightBackMotorID = 0;
     public static final int kMaxMotorOutput_Volts = 10;
     public static final double kTrackWidth_M = Units.inchesToMeters(21.869);
+    public static final boolean kIsLeftInverted = false;
+    public static final boolean kIsRightInverted = false;
   }
 }

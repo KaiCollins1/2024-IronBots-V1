@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -41,7 +42,8 @@ private RelativeEncoder rightBackEncoder;
   /** Creates a new DriveSybsystem. */
   public DriveSybsystem() {
 
-
+    leftFrontMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
+    leftFrontMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
     leftBackMotor.follow(leftFrontMotor);
     rightBackMotor.follow(rightFrontMotor);
     drive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
@@ -53,14 +55,18 @@ private RelativeEncoder rightBackEncoder;
     rightFrontEncoder = rightFrontMotor.getEncoder();
     rightBackEncoder = rightBackMotor.getEncoder();
 
-    //set velocity and position scaling (from rot and rps to meters and m/s)
+    //Encoder setup (inversion and scaling from rotations and rpm to meters and m/s)
     leftFrontEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
     leftFrontEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    leftFrontEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
     leftBackEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
     leftBackEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    leftBackEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
     rightFrontEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
     rightFrontEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    leftFrontEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
     rightBackEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    leftBackEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
     rightBackEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
 
     this.zeroEncoders();
@@ -80,8 +86,28 @@ private RelativeEncoder rightBackEncoder;
     rightBackEncoder.setPosition(0);
   }
 
-  public void chassisSpeedDrive(ChassisSpeeds speedObject) {
-    leftFrontMotor.setVoltage(10*)
-    Math.clamp();
+  public double getAvgLeftPosition() {
+    return (leftFrontEncoder.getPosition()+leftBackEncoder.getPosition())/2;
   }
+  public double getAvgLeftVelocity() {
+    return (leftFrontEncoder.getVelocity()+leftBackEncoder.getVelocity())/2;
+  }
+  public double getAvgRightPosition() {
+    return (rightFrontEncoder.getPosition()+rightBackEncoder.getPosition())/2;
+  }
+  public double getAvgRightVelocity() {
+    return (rightFrontEncoder.getVelocity()+rightBackEncoder.getVelocity())/2;
+  }
+
+
+  // public void chassisSpeedDrive(ChassisSpeeds speedObject) {
+  //   leftFrontMotor.setVoltage(
+  //     DriveSubsystemConstants.kMaxMotorOutput_Volts * 
+  //     MathUtil.clamp(
+  //       driveFeedforward.calculate(driveKinematics.toWheelSpeeds(speedObject).leftMetersPerSecond)
+  //       + drivePidController.calculate(),
+  //       -1,
+  //       1)
+  //   );
+  // }
 }
