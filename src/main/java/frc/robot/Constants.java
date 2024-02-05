@@ -41,10 +41,10 @@ public final class Constants {
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46*60);
 
     //drive/motor constants
-    public static final int kLeftFrontMotorID = 0;
-    public static final int kLeftBackMotorID = 0;
-    public static final int kRightFrontMotorID = 0;
-    public static final int kRightBackMotorID = 0;
+    public static final int kLeftFrontMotorID = 4;
+    public static final int kLeftBackMotorID = 5;
+    public static final int kRightFrontMotorID = 6;
+    public static final int kRightBackMotorID = 7;
     public static final double kTrackWidth_M = Units.inchesToMeters(21.869);
     public static final boolean kIsLeftInverted = false;
     public static final boolean kIsRightInverted = false;
