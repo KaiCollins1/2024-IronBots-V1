@@ -135,7 +135,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
 
     drive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
     
-
     //grab motor encoders as an easy to use object
     leftFrontEncoder = leftFrontMotor.getEncoder();
     leftBackEncoder = leftBackMotor.getEncoder();
@@ -153,24 +152,26 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     rightFrontEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
     rightBackEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
 
-    leftFrontEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    leftBackEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    rightFrontEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
-    rightBackEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
+    // leftFrontEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
+    // leftBackEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
+    // rightFrontEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
+    // rightBackEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
 
-    this.zeroEncoders(false);
+    driveOdometry = new DifferentialDriveOdometry(new Rotation2d(0), 0, 0);
+    zeroEncoders(false);
+    zeroGyro(false);
 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    drivePose = driveOdometry.update(gyro.getRotation2d(), this.getAvgLeftPosition(), this.getAvgRightPosition());
+    drivePose = driveOdometry.update(gyro.getRotation2d(), getAvgLeftPosition(), getAvgRightPosition());
   }
 
   public Command smartArcadeDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
     return run(
-      () -> this.chassisSpeedDrive(
+      () -> chassisSpeedDrive(
         new ChassisSpeeds(
           DriveSubsystemConstants.kMaxDriveVelocity_Mps * fwdSupplier.getAsDouble(),
           0, //vy is always zero because we use tank drive and it cannot move sideways
@@ -184,9 +185,10 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     return run(
       () -> drive.arcadeDrive(
         fwdSupplier.getAsDouble(), 
-        rotSupplier.getAsDouble()
+        rotSupplier.getAsDouble(), 
+        true
       )
-    ).withName("smartArcadeDrive");
+    ).withName("dumbArcadeDrive");
   }
 
   // private void smartArcadeDrive(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
@@ -265,7 +267,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
 
   public void zeroGyro(boolean recalcOdometry) {
     gyro.reset();
-    if(recalcOdometry) driveOdometry.resetPosition(new Rotation2d(0), this.getAvgLeftPosition(), this.getAvgRightPosition(), drivePose);
+    if(recalcOdometry) driveOdometry.resetPosition(new Rotation2d(0), getAvgLeftPosition(), getAvgRightPosition(), drivePose);
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

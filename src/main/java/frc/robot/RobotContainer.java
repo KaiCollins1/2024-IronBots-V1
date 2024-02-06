@@ -61,7 +61,7 @@ public class RobotContainer {
       m_driveSubsystem,
       DriveSubsystemConstants.kUseSmartTeleopDrive ?
       m_driveSubsystem.smartArcadeDriveCommand(
-        () -> m_driverController.getLeftY(),
+        () -> m_driverController.getLeftX(),
         () -> m_driverController.getRightX()
       ) :
       m_driveSubsystem.dumbArcadeDriveCommand(

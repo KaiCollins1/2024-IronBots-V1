@@ -46,7 +46,7 @@ public final class Constants {
     public static final int kRightFrontMotorID = 6;
     public static final int kRightBackMotorID = 7;
     public static final double kTrackWidth_M = Units.inchesToMeters(21.869);
-    public static final boolean kIsLeftInverted = false;
+    public static final boolean kIsLeftInverted = true;
     public static final boolean kIsRightInverted = false;
     //meters per second max velocity when at full throttle, and radians per second max rotation when at full throttle
     public static final double kMaxDriveVelocity_Mps = 0;
