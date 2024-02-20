@@ -120,42 +120,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   /** Creates a new DriveSybsystem. */
   public DriveSybsystem() {
 
-    //motor config
-    leftFrontMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    leftBackMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    rightFrontMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    rightBackMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    leftFrontMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    leftBackMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    rightFrontMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
-    rightBackMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
-
-    leftBackMotor.follow(leftFrontMotor);
-    rightBackMotor.follow(rightFrontMotor);
-
-    drive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
-    
-    //grab motor encoders as an easy to use object
-    leftFrontEncoder = leftFrontMotor.getEncoder();
-    leftBackEncoder = leftBackMotor.getEncoder();
-    rightFrontEncoder = rightFrontMotor.getEncoder();
-    rightBackEncoder = rightBackMotor.getEncoder();
-
-    //Encoder config (inversion and scaling from rotations and rpm to meters and m/s)
-    leftFrontEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
-    leftBackEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
-    rightFrontEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
-    rightBackEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
-
-    leftFrontEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
-    leftBackEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
-    rightFrontEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
-    rightBackEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
-
-    // leftFrontEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    // leftBackEncoder.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    // rightFrontEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
-    // rightBackEncoder.setInverted(DriveSubsystemConstants.kIsRightInverted);
+    motorConfig();
 
     driveOdometry = new DifferentialDriveOdometry(new Rotation2d(0), 0, 0);
     zeroEncoders(false);
@@ -276,6 +241,41 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
+  }
+
+  private void motorConfig(){
+    //motor config
+    leftFrontMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
+    leftBackMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
+    rightFrontMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
+    rightBackMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
+    leftFrontMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
+    leftBackMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
+    rightFrontMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
+    rightBackMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
+
+    leftBackMotor.follow(leftFrontMotor);
+    rightBackMotor.follow(rightFrontMotor);
+
+    drive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
+    
+    //grab motor encoders as an easy to use object
+    leftFrontEncoder = leftFrontMotor.getEncoder();
+    leftBackEncoder = leftBackMotor.getEncoder();
+    rightFrontEncoder = rightFrontMotor.getEncoder();
+    rightBackEncoder = rightBackMotor.getEncoder();
+
+    //Encoder config (inversion and scaling from rotations and rpm to meters and m/s)
+    leftFrontEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    leftBackEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    rightFrontEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    rightBackEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+
+    leftFrontEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    leftBackEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    rightFrontEncoder.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    rightBackEncoder.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+
   }
 
 }

@@ -22,6 +22,7 @@ public final class Constants {
   public static class AutonConstants {
     public static final int kMaxDrtiveMotorOutput_Volts = 10;
   }
+
   public static class DriveSubsystemConstants {
 
     //feedforward constants
@@ -55,4 +56,19 @@ public final class Constants {
     public static final int kMotorCurrentLimit = 50;
     public static final boolean kUseSmartTeleopDrive = false;
   }
+
+  public static class ShooterSubsystemConstants {
+
+    public static final int kMovementMotorID = 8;
+    public static final int kRotationMotorID = 9;
+
+    public static final double kP = 0;
+    public static final double kD = 0;
+    public static final double kI = 0;
+
+    public static final double kGoalSpeed1_MPS = 8;
+    public static final double kGoalSpeed2_MPS = 10;
+
+  }
+
 }
