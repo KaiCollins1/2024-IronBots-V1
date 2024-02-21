@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private CANSparkMax movementMotor;
+  private CANSparkMax rollerMotor;
   private CANSparkMax rotationMotor;
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {}

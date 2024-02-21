@@ -54,20 +54,44 @@ public final class Constants {
     public static final double kMaxDriveRotations_Radps = 0 * 2 * Math.PI;
     //max current for driving
     public static final int kMotorCurrentLimit = 50;
+
+
     public static final boolean kUseSmartTeleopDrive = false;
   }
 
   public static class ShooterSubsystemConstants {
 
-    public static final int kMovementMotorID = 8;
-    public static final int kRotationMotorID = 9;
+    // public static final int kMovementMotorID = 10;
+    // public static final int kRollerMotorID = 11;
 
+    public static final int kTopRollerMotorID = 8;
+    public static final int kBottomRollerMotorID = 9;
+
+    public static final boolean kIsTopReversed = false;
+    public static final boolean kIsBottomReversed = !kIsTopReversed;
+
+    //feedforward constants
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+    public static final int kResponseTimescale_Milis = 1000;
+
+    //velocity PID constants
     public static final double kP = 0;
     public static final double kD = 0;
     public static final double kI = 0;
+    public static final double kMaxVelocityError = 0;
+    public static final double kMaxControlEffort = 0;
 
-    public static final double kGoalSpeed1_MPS = 8;
-    public static final double kGoalSpeed2_MPS = 10;
+    //encoder constants
+    //converts between revolutions/rpm to meters and m/s
+    public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(4)*Math.PI);
+    public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(4)*Math.PI)/60;
+
+    public static final boolean kUseSetSpeedSmart = false;
+
+    public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 8 : 0.2;
+    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 10 : 0.8;
 
   }
 

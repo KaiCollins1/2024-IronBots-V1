@@ -46,9 +46,22 @@ private CANSparkMax rightBackMotor = new CANSparkMax(DriveSubsystemConstants.kRi
 
 private DifferentialDrive drive;
 
-private PIDController leftDrivePidController = new PIDController(DriveSubsystemConstants.kP, 0, DriveSubsystemConstants.kD);
-private PIDController rightDrivePidController = new PIDController(DriveSubsystemConstants.kP, 0, DriveSubsystemConstants.kD);
-private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(DriveSubsystemConstants.kS, DriveSubsystemConstants.kV, DriveSubsystemConstants.kA);
+private PIDController leftDrivePidController = new PIDController(
+  DriveSubsystemConstants.kP, 
+  0, 
+  DriveSubsystemConstants.kD
+);
+private PIDController rightDrivePidController = new PIDController(
+  DriveSubsystemConstants.kP, 
+  0,
+  DriveSubsystemConstants.kD
+);
+private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
+  DriveSubsystemConstants.kS,
+  DriveSubsystemConstants.kV,
+  DriveSubsystemConstants.kA
+);
+
 private DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(DriveSubsystemConstants.kTrackWidth_M);
 
 private RelativeEncoder leftFrontEncoder;
@@ -74,13 +87,13 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   )
 );
 
-// // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
+// //Old non URCL SysID
+// //Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
 // private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
 // // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
 // private final MutableMeasure<Distance> m_distance = mutable(Meters.of(0));
 // // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
 // private final MutableMeasure<Velocity<Distance>> m_velocity = mutable(MetersPerSecond.of(0));
-
 // private final SysIdRoutine sysIdRoutine =
 //       new SysIdRoutine(
 //           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
@@ -193,8 +206,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     );
 
   }
-
-  //public void voltageDrive()
 
   public void setPose2d(Pose2d newPose) {
     drivePose = newPose;
