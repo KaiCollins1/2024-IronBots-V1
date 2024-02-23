@@ -4,15 +4,17 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeSubsystemConstants;
+import frc.robot.Constants.ShooterSubsystemConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -24,6 +26,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private CANSparkMax rollerMotor;
   private RelativeEncoder rollerHallSensor;
   private PIDController rollerPID;
+  private SimpleMotorFeedforward rollerFeedforward;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -45,8 +48,42 @@ public class IntakeSubsystem extends SubsystemBase {
     movementAbsEncoder = new DutyCycleEncoder(IntakeSubsystemConstants.kMovementAbsEncoderPin);
     movementAbsEncoder.setDistancePerRotation(IntakeSubsystemConstants.kMovementAbsEncoderDistancePerRoatation);
 
+    rollerPID = new PIDController(
+      IntakeSubsystemConstants.kRP, 
+      IntakeSubsystemConstants.kRI, 
+      IntakeSubsystemConstants.kRD
+    );
+
+    movementPID = new PIDController(
+      IntakeSubsystemConstants.kMP,
+      IntakeSubsystemConstants.kMI, 
+      IntakeSubsystemConstants.kMD
+    );
+
+    rollerFeedforward = new SimpleMotorFeedforward(
+      IntakeSubsystemConstants.kRS,
+      IntakeSubsystemConstants.kRV,
+      IntakeSubsystemConstants.kRA
+    );
 
   }
+
+
+  private Command rawrollerSpeedCommand(double speed){
+    return (
+      IntakeSubsystemConstants.kUseSmartMoveNRollDrive ? 
+      run(() -> 
+        rollerMotor.setVoltage(
+          rollerFeedforward.calculate(speed)+
+          rollerPID.calculate(rollerHallSensor.getVelocity(), speed)
+        )).withName("setRollerSpeedSmart") 
+      :
+      run(() -> 
+        rollerMotor.set(speed)
+      ).withName("setRollerSpeedDumb")
+    );
+  }
+
 
   @Override
   public void periodic() {
