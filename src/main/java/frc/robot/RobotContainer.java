@@ -5,11 +5,11 @@
 package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.Constants.DriveSubsystemConstants;
 import frc.robot.commands.Autos;
-//import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.DriveSybsystem;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+//import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -25,8 +25,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final DriveSybsystem m_driveSubsystem = new DriveSybsystem();
+  //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -59,37 +61,44 @@ public class RobotContainer {
 
     CommandScheduler.getInstance().setDefaultCommand(
       m_driveSubsystem,
-      DriveSubsystemConstants.kUseSmartTeleopDrive ?
-      m_driveSubsystem.smartArcadeDriveCommand(
-        () -> m_driverController.getLeftX(),
-        () -> m_driverController.getRightX()
-      ) :
-      m_driveSubsystem.dumbArcadeDriveCommand(
+      m_driveSubsystem.teleopDriveCommand(
         () -> m_driverController.getLeftY(),
         () -> m_driverController.getRightX()
       )
     );
 
-    // Bind full set of SysId routine tests to buttons; a complete routine should run each of these
-    // once.
+    CommandScheduler.getInstance().setDefaultCommand(
+      m_shooterSubsystem, 
+      m_shooterSubsystem.setShooterSpeed(
+        () -> m_driverController.leftBumper().getAsBoolean(),
+        () -> m_driverController.rightBumper().getAsBoolean()
+      )
+    );
+
+    // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
     m_driverController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     m_driverController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
     m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // m_driverController.a().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // m_driverController.b().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // m_driverController.x().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // m_driverController.y().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
+  //@return the command to run in autonomous
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    //return Autos.exampleAuto(m_exampleSubsystem);
+    return null;
   }
 
   public void updateSchedulerTelemetry() {
     SmartDashboard.putData(m_driveSubsystem);
+    SmartDashboard.putData(m_shooterSubsystem);
+    SmartDashboard.putData(m_intakeSubsystem);
   }
 
 }

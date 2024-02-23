@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -25,6 +26,11 @@ public final class Constants {
 
   public static class DriveSubsystemConstants {
 
+    //major drive config changes
+    public static final boolean kUseSmartTeleopDrive = false;
+    public static final boolean kUseQuadEncoders = false;
+    
+
     //feedforward constants
     public static final double kS = 0;
     public static final double kV = 0;
@@ -36,10 +42,18 @@ public final class Constants {
     public static final double kMaxVelocityError = 0;
     public static final double kMaxControlEffort = 0;
 
-    //encoder constants
+    //Relative Encoder constants
     //converts between revolutions/rpm to meters and m/s
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46);
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46*60);
+
+    //Quad Encoder constants
+    public static final int kLeftEncoderPortA = 0;
+    public static final int kLeftEncoderPortB = 1;
+    public static final int kRightEncoderPortA = 4;
+    public static final int kRightEncoderPortB = 5;
+
+    public static final double kDistancePerPulse = (Units.inchesToMeters(6)*Math.PI)/(2048);
 
     //drive/motor constants
     public static final int kLeftFrontMotorID = 4;
@@ -56,19 +70,23 @@ public final class Constants {
     public static final int kMotorCurrentLimit = 50;
 
 
-    public static final boolean kUseSmartTeleopDrive = false;
   }
 
   public static class ShooterSubsystemConstants {
 
-    // public static final int kMovementMotorID = 10;
-    // public static final int kRollerMotorID = 11;
+    //major shooter config changes
+    public static final boolean kUseSetSpeedSmart = false;
 
+    //speed constants
+    public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 8 : 0.2;
+    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 10 : 0.8;
+
+    //motor constants
     public static final int kTopRollerMotorID = 8;
     public static final int kBottomRollerMotorID = 9;
-
     public static final boolean kIsTopReversed = false;
     public static final boolean kIsBottomReversed = !kIsTopReversed;
+    public static final int kMotorCurrentLimit = 30;
 
     //feedforward constants
     public static final double kS = 0;
@@ -88,11 +106,47 @@ public final class Constants {
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(4)*Math.PI);
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(4)*Math.PI)/60;
 
-    public static final boolean kUseSetSpeedSmart = false;
-
-    public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 8 : 0.2;
-    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 10 : 0.8;
 
   }
 
+  public static class IntakeSubsystemConstants {
+
+    //subsystem config
+    public static final boolean kUseAbsoluteEncoder = true;
+    public static final boolean kUseSmartMoveNRollDrive = false;
+    public static final double kGoalIntakeSpeed = kUseSmartMoveNRollDrive ? 3.0 : 0.75;
+    public static final double kGoalHandoffSpeed = kUseSmartMoveNRollDrive ? 4.0 : 0.90;
+
+    //roller feedforward constants
+    public static final double kRS = 0;
+    public static final double kRV = 0;
+    public static final double kRA = 0;
+    public static final int kRResponseTimescale_Milis = 1000;
+    //roller PID constants
+    public static final double kRP = 0;
+    public static final double kRD = 0;
+    public static final double kRI = 0;
+    public static final double kRMaxVelocityError = 0;
+    public static final double kRMaxControlEffort = 0;
+    //movement PID constants
+    public static final double kMP = 0;
+    public static final double kMD = 0;
+    public static final double kMI = 0;
+    public static final double kMMaxVelocityError = 0;
+    public static final double kMMaxControlEffort = 0;
+
+    //motor constants
+    public static final int kMovementMotorID = 10;
+    public static final int kRollerMotorID = 11;
+    public static final int kMotorCurrentLimit = 0;
+
+    //encoder constants
+    public static final double kRollerHallSensorVelcityConversionFactor = 0;
+    public static final double kRollerHallSensorPositionConversionFactor = 0;
+    public static final double kMovementHallSensorPositionConversionFactor = 0;
+    public static final double kMovementHallSensorVelocityConversionFactor = 0;
+    public static final int kMovementAbsEncoderPin = 7;
+    public static final double kMovementAbsEncoderDistancePerRoatation = 0;
+
+  }
 }
