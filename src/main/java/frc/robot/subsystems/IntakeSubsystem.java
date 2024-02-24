@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -83,6 +85,35 @@ public class IntakeSubsystem extends SubsystemBase {
       ).withName("setRollerSpeedDumb")
     );
   }
+
+  // public Command tempMovementCommand(BooleanSupplier upBtn, BooleanSupplier dwnBtn){
+  //   return run(() ->{
+  //     movementMotor.set(
+  //       upBtn.getAsBoolean() ? 0.25 : (dwnBtn.getAsBoolean() ? -0.25 : 0.0)
+  //     );
+  //   });
+  // }
+
+  // public Command tempRollerCommand(BooleanSupplier inBtn, BooleanSupplier outBtn){
+  //   return run(() ->{
+  //     rollerMotor.set(
+  //       inBtn.getAsBoolean() ? 0.25 : (outBtn.getAsBoolean() ? -0.25 : 0.0)
+  //     );
+  //   });
+  // }
+
+  public Command tempDefaultCommand(BooleanSupplier upBtn, BooleanSupplier dwnBtn, BooleanSupplier inBtn, BooleanSupplier outBtn){
+    return run(() ->{
+      rollerMotor.set(
+        inBtn.getAsBoolean() ? 0.25 : (outBtn.getAsBoolean() ? -0.25 : 0.0)
+      );
+      movementMotor.set(
+        upBtn.getAsBoolean() ? 0.25 : (dwnBtn.getAsBoolean() ? -0.25 : 0.0)
+      );
+    });
+  }
+
+
 
 
   @Override

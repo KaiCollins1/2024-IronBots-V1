@@ -138,7 +138,7 @@ public final class Constants {
     //motor constants
     public static final int kMovementMotorID = 10;
     public static final int kRollerMotorID = 11;
-    public static final int kMotorCurrentLimit = 0;
+    public static final int kMotorCurrentLimit = 30;
 
     //encoder constants
     public static final double kRollerHallSensorVelcityConversionFactor = 0;
