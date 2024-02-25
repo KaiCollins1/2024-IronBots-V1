@@ -19,17 +19,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-//import static edu.wpi.first.units.MutableMeasure.mutable;
-//import static edu.wpi.first.units.Units.Meters;
-//import static edu.wpi.first.units.Units.MetersPerSecond;
+
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
-//import edu.wpi.first.units.Velocity;
-//import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
-//import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Time;
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.units.UnitBuilder;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.Encoder;
-//import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -81,7 +81,8 @@ private Pose2d drivePose = new Pose2d(new Translation2d(0,0), new Rotation2d(0))
 
 // Create the URCL compatable SysId routine
 private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
-  new SysIdRoutine.Config(), //we are not using advantage kit so we can just leave this empty
+  // new SysIdRoutine.Config(Volts.of(0.5), Volts.of(7), Seconds.of(10)),
+  new SysIdRoutine.Config(Volts.per(Seconds).of(0.5), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty
   new SysIdRoutine.Mechanism(
     (Measure<Voltage> volts) -> {
       leftLeaderMotor.setVoltage(volts.in(Volts));

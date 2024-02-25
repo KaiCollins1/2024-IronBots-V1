@@ -75,7 +75,7 @@ public final class Constants {
   public static class ShooterSubsystemConstants {
 
     //major shooter config changes
-    public static final boolean kUseSetSpeedSmart = false;
+    public static final boolean kUseSetSpeedSmart = true;
 
     //speed constants
     public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 8 : 0.2;
@@ -89,17 +89,17 @@ public final class Constants {
     public static final int kMotorCurrentLimit = 50;
 
     //feedforward constants
-    public static final double kS = 0;
-    public static final double kV = 0;
-    public static final double kA = 0;
-    public static final int kResponseTimescale_Milis = 1000;
+    public static final double kS = 0.38361;
+    public static final double kV = 0.45433;
+    public static final double kA = 0.25736;
+    //public static final int kResponseTimescale_Milis = 1000;
 
     //velocity PID constants
-    public static final double kP = 0;
+    public static final double kP = 0.68552;
     public static final double kD = 0;
     public static final double kI = 0;
-    public static final double kMaxVelocityError = 0;
-    public static final double kMaxControlEffort = 0;
+    //public static final double kMaxVelocityError = 0;
+    //public static final double kMaxControlEffort = 0;
 
     //encoder constants
     //converts between revolutions/rpm to meters and m/s
