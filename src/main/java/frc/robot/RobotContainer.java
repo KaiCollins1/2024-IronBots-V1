@@ -67,13 +67,13 @@ public class RobotContainer {
       )
     );
 
-    CommandScheduler.getInstance().setDefaultCommand(
-      m_shooterSubsystem, 
-      m_shooterSubsystem.setShooterSpeed(
-        m_driverController.leftBumper(), //high speed
-        m_driverController.rightBumper() //low speed
-      )
-    );
+    // CommandScheduler.getInstance().setDefaultCommand(
+    //   m_shooterSubsystem, 
+    //   m_shooterSubsystem.setShooterSpeed(
+    //     m_driverController.a(), //high speed
+    //     m_driverController.b() //low speed
+    //   )
+    // );
 
     CommandScheduler.getInstance().setDefaultCommand(
       m_intakeSubsystem,
@@ -93,10 +93,10 @@ public class RobotContainer {
     // m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // m_driverController.a().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // m_driverController.b().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // m_driverController.x().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // m_driverController.y().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_driverController.a().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController.b().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController.x().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverController.y().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
   }
 
@@ -111,6 +111,7 @@ public class RobotContainer {
     SmartDashboard.putData(m_driveSubsystem);
     SmartDashboard.putData(m_shooterSubsystem);
     SmartDashboard.putData(m_intakeSubsystem);
+    SmartDashboard.putNumber("avgShooterSpeed", m_shooterSubsystem.getAvgSpeed());
   }
 
 }

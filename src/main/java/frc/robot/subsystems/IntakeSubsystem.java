@@ -105,10 +105,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command tempDefaultCommand(BooleanSupplier upBtn, BooleanSupplier dwnBtn, BooleanSupplier inBtn, BooleanSupplier outBtn){
     return run(() ->{
       rollerMotor.set(
-        inBtn.getAsBoolean() ? 0.25 : (outBtn.getAsBoolean() ? -0.25 : 0.0)
+        inBtn.getAsBoolean() ? 0.4 : (outBtn.getAsBoolean() ? -0.8 : 0.0)
       );
       movementMotor.set(
-        upBtn.getAsBoolean() ? 0.25 : (dwnBtn.getAsBoolean() ? -0.25 : 0.0)
+        upBtn.getAsBoolean() ? 0.18 : (dwnBtn.getAsBoolean() ? -0.2 : 0.0)
       );
     });
   }

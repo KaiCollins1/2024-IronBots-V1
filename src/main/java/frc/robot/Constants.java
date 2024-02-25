@@ -67,7 +67,7 @@ public final class Constants {
     public static final double kMaxDriveVelocity_Mps = 0;
     public static final double kMaxDriveRotations_Radps = 0 * 2 * Math.PI;
     //max current for driving
-    public static final int kMotorCurrentLimit = 50;
+    public static final int kMotorCurrentLimit = 55;
 
 
   }
@@ -79,14 +79,14 @@ public final class Constants {
 
     //speed constants
     public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 8 : 0.2;
-    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 10 : 0.8;
+    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 10 : 1;
 
     //motor constants
     public static final int kTopRollerMotorID = 8;
     public static final int kBottomRollerMotorID = 9;
     public static final boolean kIsTopReversed = false;
     public static final boolean kIsBottomReversed = !kIsTopReversed;
-    public static final int kMotorCurrentLimit = 30;
+    public static final int kMotorCurrentLimit = 50;
 
     //feedforward constants
     public static final double kS = 0;
@@ -141,12 +141,12 @@ public final class Constants {
     public static final int kMotorCurrentLimit = 30;
 
     //encoder constants
-    public static final double kRollerHallSensorVelcityConversionFactor = 0;
-    public static final double kRollerHallSensorPositionConversionFactor = 0;
-    public static final double kMovementHallSensorPositionConversionFactor = 0;
-    public static final double kMovementHallSensorVelocityConversionFactor = 0;
+    public static final double kRollerHallSensorVelcityConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5);
+    public static final double kRollerHallSensorPositionConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5*60);
+    public static final double kMovementHallSensorPositionConversionFactor = 360/(20);
+    public static final double kMovementHallSensorVelocityConversionFactor = 360/(20*60);
     public static final int kMovementAbsEncoderPin = 7;
-    public static final double kMovementAbsEncoderDistancePerRoatation = 0;
+    public static final double kMovementAbsEncoderDistancePerRoatation = 360;
 
   }
 }

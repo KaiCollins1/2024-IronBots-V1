@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -86,29 +88,33 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command setShooterSpeed(BooleanSupplier highSpeedEnabled, BooleanSupplier lowSpeedEnabled){
     return (
       rawSetSpeedCommand(
-        highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh:
+        () -> highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh:
         (lowSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedLow : 0 )
-      ) 
+      )
+      // .andThen(run(
+      //    () -> SmartDashboard.putNumber("topMotorSpeed", topMotor.get())
+      //   )
+      // )
     );
   }
 
-  private Command rawSetSpeedCommand(double speed){
+  private Command rawSetSpeedCommand(DoubleSupplier speed){
     return (
       ShooterSubsystemConstants.kUseSetSpeedSmart ? 
       run(() -> {
         topMotor.setVoltage(
-          feedforward.calculate(speed)+
-          topPID.calculate(topEncoder.getVelocity(), speed)
+          feedforward.calculate(speed.getAsDouble())+
+          topPID.calculate(topEncoder.getVelocity(), speed.getAsDouble())
         );
         bottomMotor.setVoltage(
-          feedforward.calculate(speed)+
-          bottomPID.calculate(bottomEncoder.getVelocity(), speed)
+          feedforward.calculate(speed.getAsDouble())+
+          bottomPID.calculate(bottomEncoder.getVelocity(), speed.getAsDouble())
         );
       }).withName("setSpeedSmart") 
       :
       run(() -> {
-        topMotor.set(speed);
-        bottomMotor.set(speed);
+        topMotor.set(speed.getAsDouble());
+        bottomMotor.set(speed.getAsDouble());
       }).withName("setSpeedDumb")
     );
   }
@@ -134,6 +140,10 @@ public class ShooterSubsystem extends SubsystemBase {
       >= 
       (isGoalHighSpeed ? ShooterSubsystemConstants.kGoalSpeedHigh : ShooterSubsystemConstants.kGoalSpeedLow)
     );
+  }
+
+  public double getAvgSpeed(){
+    return (topEncoder.getVelocity()+bottomEncoder.getVelocity())/2;
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
