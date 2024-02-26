@@ -5,7 +5,7 @@
       "x": 1.351171298833826,
       "y": 5.537433881885308
     },
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -14,25 +14,25 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "straightShoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "GrabMiddleNote"
+            "pathName": "MGrabNoteM"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ReturnNoteMiddle"
+            "pathName": "MReturnNoteM"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "straightShoot"
           }
         },
         {

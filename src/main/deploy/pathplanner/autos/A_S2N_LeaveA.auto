@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7225691234732697,
+      "y": 6.695397489965702
+    },
+    "rotation": 59.28854486703943
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "straightShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AGrabNoteA"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AReturnNoteA"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "straightShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ALeaveA"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

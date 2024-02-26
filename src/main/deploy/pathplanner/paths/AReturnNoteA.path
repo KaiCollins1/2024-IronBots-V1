@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7345293637955697,
-        "y": 6.680035114456194
+        "x": 2.2579976738900847,
+        "y": 6.970219554474197
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.079123386316948,
-        "y": 7.378291423249514
+        "x": 1.7320387312231849,
+        "y": 6.979308377125346
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.4030898938990863,
-        "y": 6.979287818224759
+        "x": 0.7254611000450071,
+        "y": 6.725376433209007
       },
       "prevControl": {
-        "x": 1.4871952550922645,
-        "y": 6.961151290723635
+        "x": 1.1426012325708863,
+        "y": 7.478042324505703
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,25 +30,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": null
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -60,8 +42,8 @@
     "rotation": 0,
     "rotateFast": false
   },
-  "reversed": false,
-  "folder": "New Folder",
+  "reversed": true,
+  "folder": "AmpSide",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0
