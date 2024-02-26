@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.BooleanSupplier;
@@ -49,7 +50,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Create the URCL compatable SysId routine
   private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
-    new SysIdRoutine.Config(), //we are not using advantage kit so we can just leave this empty
+    new SysIdRoutine.Config(Volts.per(Seconds).of(0.8), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty, //we are not using advantage kit so we can just leave this empty
     new SysIdRoutine.Mechanism(
       (Measure<Voltage> volts) -> {
         topMotor.setVoltage(volts.in(Volts));
@@ -76,6 +77,10 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomEncoder.setPositionConversionFactor(ShooterSubsystemConstants.kEncoderPositionScalingFactor);
     topEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
     bottomEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
+    // topEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
+    // topEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
+    // bottomEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
+    // bottomEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
 
   }
 

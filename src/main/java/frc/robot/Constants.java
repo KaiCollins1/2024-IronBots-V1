@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycle;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -74,19 +73,18 @@ public final class Constants {
 
   public static class ShooterSubsystemConstants {
 
-    //major shooter config changes
     public static final boolean kUseSetSpeedSmart = true;
 
     //speed constants
-    public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 8 : 0.2;
-    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 10 : 1;
+    public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 11.5 : 0.6;
+    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 13.5 : 1;
 
     //motor constants
     public static final int kTopRollerMotorID = 8;
     public static final int kBottomRollerMotorID = 9;
     public static final boolean kIsTopReversed = false;
     public static final boolean kIsBottomReversed = !kIsTopReversed;
-    public static final int kMotorCurrentLimit = 50;
+    public static final int kMotorCurrentLimit = 60;
 
     //feedforward constants
     public static final double kS = 0.38361;
@@ -105,6 +103,8 @@ public final class Constants {
     //converts between revolutions/rpm to meters and m/s
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(4)*Math.PI);
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(4)*Math.PI)/60;
+    public static final int kFilterDepth = 2;
+    public static final int kFilterPeriod = 16;
 
 
   }

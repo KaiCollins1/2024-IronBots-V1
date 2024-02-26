@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeSubsystemConstants;
-import frc.robot.Constants.ShooterSubsystemConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -105,7 +104,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command tempDefaultCommand(BooleanSupplier upBtn, BooleanSupplier dwnBtn, BooleanSupplier inBtn, BooleanSupplier outBtn){
     return run(() ->{
       rollerMotor.set(
-        inBtn.getAsBoolean() ? 0.4 : (outBtn.getAsBoolean() ? -0.8 : 0.0)
+        inBtn.getAsBoolean() ? 0.4 : (outBtn.getAsBoolean() ? -.8 : 0.0)
       );
       movementMotor.set(
         upBtn.getAsBoolean() ? 0.18 : (dwnBtn.getAsBoolean() ? -0.2 : 0.0)

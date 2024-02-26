@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -19,19 +21,18 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Time;
-import edu.wpi.first.units.Unit;
-import edu.wpi.first.units.UnitBuilder;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -162,6 +163,29 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     zeroGyro(false);
     driveOdometry = new DifferentialDriveOdometry(new Rotation2d(0), 0, 0);
 
+    AutoBuilder.configureRamsete(
+      () -> drivePose, // Robot pose supplier
+      this::setPose2d, // Method to reset odometry (will be called if your auto has a starting pose)
+      () -> new ChassisSpeeds( // Current ChassisSpeeds supplier
+        getAvgVelocity(),
+        0,
+        Units.DegreesPerSecond.of(gyro.getRate()).in(RadiansPerSecond)
+      ),
+      this::rawChassisSpeedDrive, // Method that will drive the robot given ChassisSpeeds
+      new ReplanningConfig(), // Default path replanning config. See the API for the options here
+      () -> {
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+          return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+      },
+      this // Reference to this subsystem to set requirements
+    );
+
   }
 
   @Override
@@ -241,7 +265,11 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   }
 
   public void setPose2d(Pose2d newPose) {
-    drivePose = newPose;
+    driveOdometry.resetPosition(
+      gyro.getRotation2d(),
+      new DifferentialDriveWheelPositions(getAvgLeftPosition(), getAvgRightPosition()),
+      newPose
+    );
   }
 
   public Pose2d getPose2d() {
@@ -275,6 +303,22 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       DriveSubsystemConstants.kUseQuadEncoders?
       rightQuadEncoder.getRate():
       (rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()) / 2
+    );
+  }
+
+  public double getAvgPosition(){
+    return (
+      DriveSubsystemConstants.kUseQuadEncoders?
+      (rightQuadEncoder.getDistance() + leftQuadEncoder.getDistance())/2:
+      (rightLeaderHallSensor.getPosition() + rightFollowerHallSensor.getPosition()+ leftLeaderHallSensor.getPosition() + leftFollowerHallSensor.getPosition()) / 4
+    );
+  }
+
+  public double getAvgVelocity(){
+    return (
+      DriveSubsystemConstants.kUseQuadEncoders?
+      (rightQuadEncoder.getRate() + leftQuadEncoder.getRate())/2:
+      (rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()+ leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 4
     );
   }
 
