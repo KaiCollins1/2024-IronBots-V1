@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.BooleanSupplier;
 
 import com.revrobotics.CANSparkMax;
@@ -12,13 +15,18 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.IntakeSubsystemConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
+
+  
 
   private CANSparkMax movementMotor;
   private DutyCycleEncoder movementAbsEncoder;
@@ -30,8 +38,20 @@ public class IntakeSubsystem extends SubsystemBase {
   private PIDController rollerPID;
   private SimpleMotorFeedforward rollerFeedforward;
 
-  private double intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos;
-  private double rollerSetpoint_MPS = IntakeSubsystemConstants.kInsideBotPos;
+  private double intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos;
+  private double rollerSetpoint_MPS = 0;
+
+  // Create the URCL compatable SysId routine
+  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
+    new SysIdRoutine.Config(Volts.per(Seconds).of(0.8), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty, //we are not using advantage kit so we can just leave this empty
+    new SysIdRoutine.Mechanism(
+      (Measure<Voltage> volts) -> {
+        rollerMotor.setVoltage(volts.in(Volts));
+      },
+      null, // No log consumer, since data is recorded by URCL
+      this
+    )
+  );
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -74,16 +94,16 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
 
-  private Command prepHandoff(){
+  public Command prepHandoff(){
     return run(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos;
       rollerSetpoint_MPS = 0;
     }).withName("prep4Handoff"); 
   }
   
-  private Command setPosIdle(){
+  public Command setPosIdle(){
     return run(() -> {
-      intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos;
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos;
       rollerSetpoint_MPS = 0;
     }).withName("idling"); 
   }
@@ -95,7 +115,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }).withName("handing off"); 
   }
 
-  private Command intakeCommand(){
+  public Command intakeCommand(){
     return run(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed;
@@ -117,11 +137,19 @@ public class IntakeSubsystem extends SubsystemBase {
     });
   }
 
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    // movementMotor.setVoltage(movementPID.calculate(getAngle(), intakeSetpoint_DEG));
+    movementMotor.setVoltage(movementPID.calculate(getAngle(), intakeSetpoint_DEG));
     // rollerMotor.setVoltage(
     //  rollerFeedforward.calculate(rollerSetpoint_MPS)+
     //  rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)

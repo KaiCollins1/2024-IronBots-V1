@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -100,41 +99,41 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command tempSetShooterSpeed(BooleanSupplier highSpeedEnabled, BooleanSupplier lowSpeedEnabled){
-    return (
-      tempRawSetSpeedCommand(
-        () -> highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh:
-        (lowSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedLow : 0 )
+    return (run(() -> 
+      speedSetpoint = (
+        highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh :
+        (lowSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedLow : 0)
       )
-    );
+    ));
   }
 
-  private Command tempRawSetSpeedCommand(DoubleSupplier speed){
-    return (
-      ShooterSubsystemConstants.kUseSetSpeedSmart ? 
-      run(() -> {
-        topMotor.setVoltage(
-          feedforward.calculate(speed.getAsDouble())+
-          topPID.calculate(topEncoder.getVelocity(), speed.getAsDouble())
-        );
-        bottomMotor.setVoltage(
-          feedforward.calculate(speed.getAsDouble())+
-          bottomPID.calculate(bottomEncoder.getVelocity(), speed.getAsDouble())
-        );
-      }).withName("setSpeedSmart") 
-      :
-      run(() -> {
-        topMotor.set(speed.getAsDouble());
-        bottomMotor.set(speed.getAsDouble());
-      }).withName("setSpeedDumb")
-    );
-  }
+  // private Command tempRawSetSpeedCommand(DoubleSupplier speed){
+  //   return (
+  //     ShooterSubsystemConstants.kUseSetSpeedSmart ? 
+  //     run(() -> {
+  //       topMotor.setVoltage(
+  //         feedforward.calculate(speed.getAsDouble())+
+  //         topPID.calculate(topEncoder.getVelocity(), speed.getAsDouble())
+  //       );
+  //       bottomMotor.setVoltage(
+  //         feedforward.calculate(speed.getAsDouble())+
+  //         bottomPID.calculate(bottomEncoder.getVelocity(), speed.getAsDouble())
+  //       );
+  //     }).withName("setSpeedSmart") 
+  //     :
+  //     run(() -> {
+  //       topMotor.set(speed.getAsDouble());
+  //       bottomMotor.set(speed.getAsDouble());
+  //     }).withName("setSpeedDumb")
+  //   );
+  // }
 
 
   public boolean velocityAboveGoal(boolean isGoalHighSpeed){
     return (
-      ((topEncoder.getVelocity() + bottomEncoder.getVelocity()) / 2)
+      getAvgSpeed()
       >= 
-      (isGoalHighSpeed ? ShooterSubsystemConstants.kGoalSpeedHigh : ShooterSubsystemConstants.kGoalSpeedLow)
+      (isGoalHighSpeed ? ShooterSubsystemConstants.kGoalSpeedHigh : ShooterSubsystemConstants.kGoalSpeedLow) - 1
     );
   }
 

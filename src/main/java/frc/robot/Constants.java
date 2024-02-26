@@ -27,7 +27,7 @@ public final class Constants {
 
     //major drive config changes
     public static final boolean kUseSmartTeleopDrive = false;
-    public static final boolean kUseQuadEncoders = false;
+    public static final boolean kUseQuadEncoders = true;
     
 
     //feedforward constants
@@ -47,8 +47,8 @@ public final class Constants {
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46*60);
 
     //Quad Encoder constants
-    public static final int kLeftEncoderPortA = 0;
-    public static final int kLeftEncoderPortB = 1;
+    public static final int kLeftEncoderPortA = 0; //3pin with blue
+    public static final int kLeftEncoderPortB = 1; //3pin with yellow
     public static final int kRightEncoderPortA = 4;
     public static final int kRightEncoderPortB = 5;
 
@@ -114,8 +114,13 @@ public final class Constants {
     //subsystem config
     public static final boolean kUseAbsoluteEncoder = true;
     public static final boolean kUseSmartMoveNRollDrive = false;
+
     public static final double kGoalIntakeSpeed = kUseSmartMoveNRollDrive ? 3.0 : 0.75;
     public static final double kGoalHandoffSpeed = kUseSmartMoveNRollDrive ? 4.0 : 0.90;
+
+    public static final double kInsideBotPos = 280-1;
+    public static final double kIntakingPos = 56+1;
+    public static final double kIdlePos = 200;
 
     //roller feedforward constants
     public static final double kRS = 0;
@@ -129,8 +134,8 @@ public final class Constants {
     public static final double kRMaxVelocityError = 0;
     public static final double kRMaxControlEffort = 0;
     //movement PID constants
-    public static final double kMP = 0;
-    public static final double kMD = 0;
+    public static final double kMP = 0.04;
+    public static final double kMD = 0.0005;
     public static final double kMI = 0;
     public static final double kMMaxVelocityError = 0;
     public static final double kMMaxControlEffort = 0;
@@ -145,11 +150,8 @@ public final class Constants {
     public static final double kRollerHallSensorPositionConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5*60);
     public static final double kMovementHallSensorPositionConversionFactor = 360/(20);
     public static final double kMovementHallSensorVelocityConversionFactor = 360/(20*60);
-    public static final int kMovementAbsEncoderPin = 7;
+    public static final int kMovementAbsEncoderPin = 7; //3pin with white wire
     public static final double kMovementAbsEncoderDistancePerRoatation = 360;
-    public static final double kInsideBotPos = 0;
-    public static final double kIntakingPos = 0;
-    public static final double kIdlePos = 0;
 
   }
 }

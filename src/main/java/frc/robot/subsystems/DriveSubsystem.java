@@ -29,11 +29,13 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -94,48 +96,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   )
 );
 
-// //Old non URCL SysID
-// //Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-// private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
-// // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-// private final MutableMeasure<Distance> m_distance = mutable(Meters.of(0));
-// // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-// private final MutableMeasure<Velocity<Distance>> m_velocity = mutable(MetersPerSecond.of(0));
-// private final SysIdRoutine sysIdRoutine =
-//       new SysIdRoutine(
-//           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-//           new SysIdRoutine.Config(),
-//           new SysIdRoutine.Mechanism(
-//               // Tell SysId how to plumb the driving voltage to the motors.
-//               (Measure<Voltage> volts) -> {
-//                 leftLeaderMotor.setVoltage(volts.in(Volts));
-//                 rightLeaderMotor.setVoltage(volts.in(Volts));
-//               },
-//               // Tell SysId how to record a frame of data for each motor on the mechanism being
-//               // characterized.
-//               log -> {
-//                 // Record a frame for the left motors.  Since these share an encoder, we consider
-//                 // the entire group to be one motor.
-//                 log.motor("drive-left")
-//                     .voltage(
-//                         m_appliedVoltage.mut_replace(
-//                             leftLeaderMotor.get() * RobotController.getBatteryVoltage(), Volts))
-//                     .linearPosition(m_distance.mut_replace(this.getAvgLeftPosition(), Meters))
-//                     .linearVelocity(
-//                         m_velocity.mut_replace(this.getAvgLeftVelocity(), MetersPerSecond));
-//                 // Record a frame for the right motors.  Since these share an encoder, we consider
-//                 // the entire group to be one motor.
-//                 log.motor("drive-right")
-//                     .voltage(
-//                         m_appliedVoltage.mut_replace(
-//                             rightLeaderMotor.get() * RobotController.getBatteryVoltage(), Volts))
-//                     .linearPosition(m_distance.mut_replace(this.getAvgRightPosition(), Meters))
-//                     .linearVelocity(
-//                         m_velocity.mut_replace(this.getAvgRightPosition(), MetersPerSecond));
-//               },
-//               // Tell SysId to make generated commands require this subsystem, suffix test state in
-//               // WPILog with this subsystem's name ("drive")
-//               this));
 
   /** Creates a new DriveSybsystem. */
   public DriveSubsystem() {
@@ -192,6 +152,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   public void periodic() {
     // This method will be called once per scheduler run
     drivePose = driveOdometry.update(gyro.getRotation2d(), getAvgLeftPosition(), getAvgRightPosition());
+    SmartDashboard.putNumber("driveAngle", drivePose.getRotation().getDegrees());
   }
 
   public Command teleopDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier){

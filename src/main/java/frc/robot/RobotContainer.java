@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -24,13 +25,13 @@ public class RobotContainer {
 
   private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.kDriverControllerPort);
 
-  private final SendableChooser<Command> autoChooser;
+  // private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     configureBindings();
 
-    NamedCommands.registerCommand("intakeCollect", null);
-    NamedCommands.registerCommand("straightShoot", null);
+    // NamedCommands.registerCommand("intakeCollect", null);
+    // NamedCommands.registerCommand("straightShoot", null);
 
 
     //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
@@ -39,8 +40,8 @@ public class RobotContainer {
     //roboRIO file system just like you would browse files on your computer.
     //https://docs.wpilib.org/en/stable/docs/software/roborio-info/roborio-ftp.html#ftp
     
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // autoChooser = AutoBuilder.buildAutoChooser();
+    // SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
 
@@ -54,24 +55,27 @@ public class RobotContainer {
       )
     );
 
-    CommandScheduler.getInstance().setDefaultCommand(
-      m_shooterSubsystem, 
-      m_shooterSubsystem.tempSetShooterSpeed(
-        m_driverController.a(), //high speed
-        m_driverController.b() //low speed
-      )
-    );
+    // CommandScheduler.getInstance().setDefaultCommand(
+    //   m_shooterSubsystem, 
+    //   m_shooterSubsystem.tempSetShooterSpeed(
+    //     m_driverController.a(), //high speed
+    //     m_driverController.b() //low speed
+    //   )
+    // );
 
-    CommandScheduler.getInstance().setDefaultCommand(
-      m_intakeSubsystem,
-      m_intakeSubsystem.tempDefaultCommand(
-        m_driverController.povUp(),     //move up
-        m_driverController.povDown(),   //move down
-        m_driverController.povLeft(),   //move in
-        m_driverController.povRight()   //move out
-      )
-    );
+    // CommandScheduler.getInstance().setDefaultCommand(
+    //   m_intakeSubsystem,
+    //   m_intakeSubsystem.tempDefaultCommand(
+    //     m_driverController.povUp(),     //move up
+    //     m_driverController.povDown(),   //move down
+    //     m_driverController.povLeft(),   //move in
+    //     m_driverController.povRight()   //move out
+    //   )
+    // );
 
+    // m_driverController.a().onTrue(m_intakeSubsystem.intakeCommand());
+    // m_driverController.b().onTrue(m_intakeSubsystem.setPosIdle());
+    // m_driverController.x().onTrue(m_intakeSubsystem.prepHandoff());
 
 
     // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
@@ -85,11 +89,17 @@ public class RobotContainer {
     // m_driverController.x().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // m_driverController.y().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    m_driverController.a().whileTrue(m_intakeSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController.b().whileTrue(m_intakeSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController.x().whileTrue(m_intakeSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverController.y().whileTrue(m_intakeSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
   }
 
   //@return the command to run in autonomous
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return null;
   }
 
   public void updateSchedulerTelemetry() {
