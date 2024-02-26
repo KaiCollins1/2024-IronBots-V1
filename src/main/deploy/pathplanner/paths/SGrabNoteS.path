@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3447749235904711,
-        "y": 5.551508791145547
+        "x": 0.6910016977928695,
+        "y": 4.385764385563857
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0612251516603957,
-        "y": 5.551508791145547
+        "x": 1.0160016977928699,
+        "y": 3.822847873103972
       },
       "isLocked": false,
-      "linkedName": "SpeakerMiddleSide"
+      "linkedName": "SpeakerSourceSide"
     },
     {
       "anchor": {
-        "x": 2.355549245940238,
-        "y": 5.551508791145547
+        "x": 2.2579976738900847,
+        "y": 4.113716473046981
       },
       "prevControl": {
-        "x": 1.5393551307013649,
-        "y": 5.551508791145547
+        "x": 1.3330347713327004,
+        "y": 4.131853000548107
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "NoteM"
+      "linkedName": "NoteS"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.3,
       "command": {
         "type": "parallel",
         "data": {
@@ -61,9 +61,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "MiddleSide",
+  "folder": "SourceSide",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -58.97166667981475,
     "velocity": 0
   },
   "useDefaultConstraints": true

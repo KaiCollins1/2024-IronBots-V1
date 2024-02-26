@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeSubsystemConstants;
@@ -28,6 +29,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private RelativeEncoder rollerHallSensor;
   private PIDController rollerPID;
   private SimpleMotorFeedforward rollerFeedforward;
+
+  private double intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos;
+  private double rollerSetpoint_MPS = IntakeSubsystemConstants.kInsideBotPos;
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -70,36 +74,37 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
 
-  private Command rawrollerSpeedCommand(double speed){
-    return (
-      IntakeSubsystemConstants.kUseSmartMoveNRollDrive ? 
-      run(() -> 
-        rollerMotor.setVoltage(
-          rollerFeedforward.calculate(speed)+
-          rollerPID.calculate(rollerHallSensor.getVelocity(), speed)
-        )).withName("setRollerSpeedSmart") 
-      :
-      run(() -> 
-        rollerMotor.set(speed)
-      ).withName("setRollerSpeedDumb")
-    );
+  private Command prepHandoff(){
+    return run(() -> {
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos;
+      rollerSetpoint_MPS = 0;
+    }).withName("prep4Handoff"); 
+  }
+  
+  private Command setPosIdle(){
+    return run(() -> {
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos;
+      rollerSetpoint_MPS = 0;
+    }).withName("idling"); 
   }
 
-  // public Command tempMovementCommand(BooleanSupplier upBtn, BooleanSupplier dwnBtn){
-  //   return run(() ->{
-  //     movementMotor.set(
-  //       upBtn.getAsBoolean() ? 0.25 : (dwnBtn.getAsBoolean() ? -0.25 : 0.0)
-  //     );
-  //   });
-  // }
+  public Command handoff(){
+    return run(() -> {
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos;
+      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed;
+    }).withName("handing off"); 
+  }
 
-  // public Command tempRollerCommand(BooleanSupplier inBtn, BooleanSupplier outBtn){
-  //   return run(() ->{
-  //     rollerMotor.set(
-  //       inBtn.getAsBoolean() ? 0.25 : (outBtn.getAsBoolean() ? -0.25 : 0.0)
-  //     );
-  //   });
-  // }
+  private Command intakeCommand(){
+    return run(() -> {
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos;
+      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed;
+    }).withName("intaking");
+  }
+
+  private double getAngle(){
+    return IntakeSubsystemConstants.kUseAbsoluteEncoder ? movementAbsEncoder.getDistance() : movementHallSensor.getPosition();
+  }
 
   public Command tempDefaultCommand(BooleanSupplier upBtn, BooleanSupplier dwnBtn, BooleanSupplier inBtn, BooleanSupplier outBtn){
     return run(() ->{
@@ -112,11 +117,18 @@ public class IntakeSubsystem extends SubsystemBase {
     });
   }
 
-
-
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // movementMotor.setVoltage(movementPID.calculate(getAngle(), intakeSetpoint_DEG));
+    // rollerMotor.setVoltage(
+    //  rollerFeedforward.calculate(rollerSetpoint_MPS)+
+    //  rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
+    // );
+
+    SmartDashboard.putNumber("Intake Angle", getAngle());
+    SmartDashboard.putNumber("Intake Speed", rollerHallSensor.getVelocity());
+
   }
 }

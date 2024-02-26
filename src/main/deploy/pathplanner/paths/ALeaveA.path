@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.8070754738000705,
-        "y": 6.725376433209007
+        "x": 0.7342217468429573,
+        "y": 6.680649035317731
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1607377600720115,
-        "y": 7.496178852006827
+        "x": 1.0791606511824932,
+        "y": 7.455394499214557
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SpeakerAmpSide"
     },
     {
       "anchor": {
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": "AmpSide",
   "previewStartingState": {
-    "rotation": 61.23235066115623,
+    "rotation": 58.547938988000524,
     "velocity": 0
   },
   "useDefaultConstraints": true

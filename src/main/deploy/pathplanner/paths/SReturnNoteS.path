@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 2.2579976738900847,
-        "y": 6.970219554474197
+        "y": 4.113716473046981
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7320387312231849,
-        "y": 6.979308377125346
+        "x": 1.5579976738900847,
+        "y": 4.113716473046981
       },
       "isLocked": false,
-      "linkedName": "NoteA"
+      "linkedName": "NoteS"
     },
     {
       "anchor": {
-        "x": 0.7329132124464048,
-        "y": 6.6711587604541185
+        "x": 0.6910016977928695,
+        "y": 4.385764385563857
       },
       "prevControl": {
-        "x": 1.1500533449722838,
-        "y": 7.423824651750814
+        "x": 1.0707833552364512,
+        "y": 3.7279632590888547
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SpeakerAmpSide"
+      "linkedName": "SpeakerSourceSide"
     }
   ],
   "rotationTargets": [],
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": true,
-  "folder": "AmpSide",
+  "folder": "SourceSide",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

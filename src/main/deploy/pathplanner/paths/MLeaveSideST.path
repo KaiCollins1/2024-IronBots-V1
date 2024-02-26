@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.2579976738900847,
-        "y": 6.970219554474197
+        "x": 1.3447749235904711,
+        "y": 5.551508791145547
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7320387312231849,
-        "y": 6.979308377125346
+        "x": 2.344774923590466,
+        "y": 5.551508791145547
       },
       "isLocked": false,
-      "linkedName": "NoteA"
+      "linkedName": "SpeakerMiddleSide"
     },
     {
       "anchor": {
-        "x": 0.7329132124464048,
-        "y": 6.6711587604541185
+        "x": 4.579473194034107,
+        "y": 5.7732087393999345
       },
       "prevControl": {
-        "x": 1.1500533449722838,
-        "y": 7.423824651750814
+        "x": 4.008172577748664,
+        "y": 5.392341661876307
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SpeakerAmpSide"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,8 +42,8 @@
     "rotation": 0,
     "rotateFast": false
   },
-  "reversed": true,
-  "folder": "AmpSide",
+  "reversed": false,
+  "folder": "MiddleSide",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

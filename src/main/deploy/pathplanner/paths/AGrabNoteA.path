@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7225691234732697,
-        "y": 6.695397489965702
+        "x": 0.7329132124464048,
+        "y": 6.6711587604541185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0981568407106441,
-        "y": 7.3871440127252646
+        "x": 1.1085009296837791,
+        "y": 7.362905283213681
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SpeakerAmpSide"
     },
     {
       "anchor": {
-        "x": 2.4030898938990863,
-        "y": 6.979287818224759
+        "x": 2.2579976738900847,
+        "y": 6.970219554474197
       },
       "prevControl": {
-        "x": 1.8045157913364738,
-        "y": 6.979287818224759
+        "x": 1.478126991341702,
+        "y": 6.970219554474197
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "NoteA"
     }
   ],
   "rotationTargets": [],

@@ -103,8 +103,8 @@ public final class Constants {
     //converts between revolutions/rpm to meters and m/s
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(4)*Math.PI);
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(4)*Math.PI)/60;
-    public static final int kFilterDepth = 2;
-    public static final int kFilterPeriod = 16;
+    public static final int kFilterDepth = 8;
+    public static final int kFilterPeriod = 8;
 
 
   }
@@ -147,6 +147,9 @@ public final class Constants {
     public static final double kMovementHallSensorVelocityConversionFactor = 360/(20*60);
     public static final int kMovementAbsEncoderPin = 7;
     public static final double kMovementAbsEncoderDistancePerRoatation = 360;
+    public static final double kInsideBotPos = 0;
+    public static final double kIntakingPos = 0;
+    public static final double kIdlePos = 0;
 
   }
 }

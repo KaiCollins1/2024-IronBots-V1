@@ -42,11 +42,14 @@ public class ShooterSubsystem extends SubsystemBase {
     ShooterSubsystemConstants.kI,
     ShooterSubsystemConstants.kD
   );
+
   private PIDController bottomPID = new PIDController(
     ShooterSubsystemConstants.kP, 
     ShooterSubsystemConstants.kI,
     ShooterSubsystemConstants.kD
   );
+
+  private double speedSetpoint = 0;
 
   // Create the URCL compatable SysId routine
   private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
@@ -77,32 +80,35 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomEncoder.setPositionConversionFactor(ShooterSubsystemConstants.kEncoderPositionScalingFactor);
     topEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
     bottomEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
-    // topEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
-    // topEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
-    // bottomEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
-    // bottomEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
+    topEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
+    topEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
+    bottomEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
+    bottomEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
 
   }
 
   @Override
   public void periodic() {
-    
-  }
-
-  public Command setShooterSpeed(BooleanSupplier highSpeedEnabled, BooleanSupplier lowSpeedEnabled){
-    return (
-      rawSetSpeedCommand(
-        () -> highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh:
-        (lowSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedLow : 0 )
-      )
-      // .andThen(run(
-      //    () -> SmartDashboard.putNumber("topMotorSpeed", topMotor.get())
-      //   )
-      // )
+    topMotor.setVoltage(
+      feedforward.calculate(speedSetpoint)+
+      topPID.calculate(topEncoder.getVelocity(), speedSetpoint)
+    );
+    bottomMotor.setVoltage(
+      feedforward.calculate(speedSetpoint)+
+      bottomPID.calculate(bottomEncoder.getVelocity(), speedSetpoint)
     );
   }
 
-  private Command rawSetSpeedCommand(DoubleSupplier speed){
+  public Command tempSetShooterSpeed(BooleanSupplier highSpeedEnabled, BooleanSupplier lowSpeedEnabled){
+    return (
+      tempRawSetSpeedCommand(
+        () -> highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh:
+        (lowSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedLow : 0 )
+      )
+    );
+  }
+
+  private Command tempRawSetSpeedCommand(DoubleSupplier speed){
     return (
       ShooterSubsystemConstants.kUseSetSpeedSmart ? 
       run(() -> {
@@ -123,20 +129,6 @@ public class ShooterSubsystem extends SubsystemBase {
     );
   }
 
-  // private Command setSpeedSmart(double speed_MPS){
-  //   return run(
-  //     () -> topMotor.setVoltage(
-  //       feedforward.calculate(speed_MPS)+
-  //       topPID.calculate(getAverageVelocity_MPS(), speed_MPS)
-  //     )
-  //   ).withName("setSpeedSmart");
-  // }
-  //
-  // private Command setSpeedDumb(double speed_DUTY){
-  //   return run(
-  //     () -> topMotor.set(speed_DUTY)
-  //   ).withName("setSpeedDumb");
-  // }
 
   public boolean velocityAboveGoal(boolean isGoalHighSpeed){
     return (

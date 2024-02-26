@@ -4,11 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Constants.ControllerConstants;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -17,6 +12,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ControllerConstants;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
@@ -33,6 +32,13 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeCollect", null);
     NamedCommands.registerCommand("straightShoot", null);
 
+
+    //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
+    //To FTP to the roboRIO, open a Windows Explorer window. In the address bar, 
+    //type ftp://roboRIO-TEAM-frc.local and press enter. You can now browse the 
+    //roboRIO file system just like you would browse files on your computer.
+    //https://docs.wpilib.org/en/stable/docs/software/roborio-info/roborio-ftp.html#ftp
+    
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -50,7 +56,7 @@ public class RobotContainer {
 
     CommandScheduler.getInstance().setDefaultCommand(
       m_shooterSubsystem, 
-      m_shooterSubsystem.setShooterSpeed(
+      m_shooterSubsystem.tempSetShooterSpeed(
         m_driverController.a(), //high speed
         m_driverController.b() //low speed
       )
