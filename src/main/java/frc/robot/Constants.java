@@ -20,7 +20,7 @@ public final class Constants {
   }
 
   public static class AutonConstants {
-    public static final int kMaxDrtiveMotorOutput_Volts = 10;
+    public static final int kMaxDrtiveMotorOutput_VOLT = 10;
   }
 
   public static class DriveSubsystemConstants {
@@ -28,29 +28,34 @@ public final class Constants {
     //major drive config changes
     public static final boolean kUseSmartTeleopDrive = false;
     public static final boolean kUseQuadEncoders = true;
+    public static final double kConfirmShootDriveSpeed_MPS = 0;
+    public static final double kConfirmShootDriveLength_SEC = 0;
+    //meters per second max velocity when at full throttle, and radians per second max rotation when at full throttle
+    public static final double kMaxDriveVelocity_MPS = 0;
+    public static final double kMaxDriveRotations_RADPS = kMaxDriveVelocity_MPS * 2 * Math.PI;
+    //max current for driving
+    public static final int kMotorCurrentLimit_AMP = 70;
     
 
     //feedforward constants
     public static final double kS = 0;
     public static final double kV = 0;
     public static final double kA = 0;
-    public static final int kResponseTimescale_Milis = 1000;
     //velocity PID constants
     public static final double kP = 0;
     public static final double kD = 0;
-    public static final double kMaxVelocityError = 0;
-    public static final double kMaxControlEffort = 0;
+    public static final double kI = 0;
 
     //Relative Encoder constants
-    //converts between revolutions/rpm to meters and m/s
+    //converts between revolutions to meters and rpm and mps
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46);
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46*60);
 
     //Quad Encoder constants
     public static final int kLeftEncoderPortA = 0; //3pin with blue
     public static final int kLeftEncoderPortB = 1; //3pin with yellow
-    public static final int kRightEncoderPortA = 4;
-    public static final int kRightEncoderPortB = 5;
+    public static final int kRightEncoderPortA = 2;
+    public static final int kRightEncoderPortB = 3;
 
     public static final double kDistancePerPulse = (Units.inchesToMeters(6)*Math.PI)/(2048);
 
@@ -62,42 +67,33 @@ public final class Constants {
     public static final double kTrackWidth_M = Units.inchesToMeters(21.869);
     public static final boolean kIsLeftInverted = true;
     public static final boolean kIsRightInverted = false;
-    //meters per second max velocity when at full throttle, and radians per second max rotation when at full throttle
-    public static final double kMaxDriveVelocity_Mps = 0;
-    public static final double kMaxDriveRotations_Radps = 0 * 2 * Math.PI;
-    //max current for driving
-    public static final int kMotorCurrentLimit = 55;
 
 
   }
 
   public static class ShooterSubsystemConstants {
 
+    //subsystem config
     public static final boolean kUseSetSpeedSmart = true;
-
-    //speed constants
-    public static final double kGoalSpeedLow = kUseSetSpeedSmart ? 11.5 : 0.6;
-    public static final double kGoalSpeedHigh = kUseSetSpeedSmart ? 13.5 : 1;
+    public static final double kHandoffAllowanceSpeed_MPS = 2;
+    public static final double kGoalSpeedLow_MPS = kUseSetSpeedSmart ? 11.5 : 0.6;
+    public static final double kGoalSpeedHigh_MPS = kUseSetSpeedSmart ? 13.5 : 1;
 
     //motor constants
     public static final int kTopRollerMotorID = 8;
     public static final int kBottomRollerMotorID = 9;
     public static final boolean kIsTopReversed = false;
     public static final boolean kIsBottomReversed = !kIsTopReversed;
-    public static final int kMotorCurrentLimit = 60;
+    public static final int kMotorCurrentLimit_AMP = 60;
 
     //feedforward constants
     public static final double kS = 0.38361;
-    public static final double kV = 0.45433;
+    public static final double kV = 0.46433;
     public static final double kA = 0.25736;
-    //public static final int kResponseTimescale_Milis = 1000;
-
     //velocity PID constants
     public static final double kP = 0.68552;
     public static final double kD = 0;
     public static final double kI = 0;
-    //public static final double kMaxVelocityError = 0;
-    //public static final double kMaxControlEffort = 0;
 
     //encoder constants
     //converts between revolutions/rpm to meters and m/s
@@ -115,43 +111,44 @@ public final class Constants {
     public static final boolean kUseAbsoluteEncoder = true;
     public static final boolean kUseSmartMoveNRollDrive = false;
 
-    public static final double kGoalIntakeSpeed = kUseSmartMoveNRollDrive ? 3.0 : 0.75;
-    public static final double kGoalHandoffSpeed = kUseSmartMoveNRollDrive ? 4.0 : 0.90;
+    public static final double kGoalIntakeSpeed_MPS = kUseSmartMoveNRollDrive ? 3.0 : 0.75;
+    public static final double kGoalHandoffSpeed_MPS = kUseSmartMoveNRollDrive ? 4.0 : 0.90;
 
-    public static final double kInsideBotPos = 280-1;
-    public static final double kIntakingPos = 56+1;
-    public static final double kIdlePos = 200;
+    public static final double kInsideBotPos_DEG = 280-1;
+    public static final double kIntakingPos_DEG = 56+1;
+    public static final double kIdlePos_DEG = 200;
 
     //roller feedforward constants
     public static final double kRS = 0;
     public static final double kRV = 0;
     public static final double kRA = 0;
-    public static final int kRResponseTimescale_Milis = 1000;
     //roller PID constants
     public static final double kRP = 0;
     public static final double kRD = 0;
     public static final double kRI = 0;
-    public static final double kRMaxVelocityError = 0;
-    public static final double kRMaxControlEffort = 0;
     //movement PID constants
     public static final double kMP = 0.04;
     public static final double kMD = 0.0005;
     public static final double kMI = 0;
-    public static final double kMMaxVelocityError = 0;
-    public static final double kMMaxControlEffort = 0;
 
     //motor constants
     public static final int kMovementMotorID = 10;
     public static final int kRollerMotorID = 11;
-    public static final int kMotorCurrentLimit = 30;
+    public static final int kMotorCurrentLimit_AMP = 30;
 
     //encoder constants
     public static final double kRollerHallSensorVelcityConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5);
     public static final double kRollerHallSensorPositionConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5*60);
     public static final double kMovementHallSensorPositionConversionFactor = 360/(20);
     public static final double kMovementHallSensorVelocityConversionFactor = 360/(20*60);
-    public static final int kMovementAbsEncoderPin = 7; //3pin with white wire
+    public static final int kMovementAbsEncoderPin = 5; //3pin with white wire
     public static final double kMovementAbsEncoderDistancePerRoatation = 360;
+
+    //sensor constants
+    public static final int kRightLimitSwitchPort = 7;
+    public static final int kMiddleLimitSwitchPort = 8;
+    public static final int kLeftLimitSwitchPort = 9;
+    public static final double kConfirmNoteOwningDelay_SEC = 0.75;
 
   }
 }

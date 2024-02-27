@@ -29,12 +29,12 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.Voltage;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -81,6 +81,7 @@ private AHRS gyro = new AHRS(SPI.Port.kMXP);
 
 private DifferentialDriveOdometry driveOdometry;
 private Pose2d drivePose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
+private Field2d fieldPose = new Field2d();
 
 // Create the URCL compatable SysId routine
 private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
@@ -100,23 +101,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   /** Creates a new DriveSybsystem. */
   public DriveSubsystem() {
 
-    //motor config
-    leftLeaderMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    leftFollowerMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    rightLeaderMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    rightFollowerMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit);
-    leftLeaderMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    leftFollowerMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
-    rightLeaderMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
-    rightFollowerMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
-
-    leftFollowerMotor.follow(leftLeaderMotor);
-    rightFollowerMotor.follow(rightLeaderMotor);
-
-    drive = new DifferentialDrive(leftLeaderMotor, rightLeaderMotor);
-
-    //deals with selection of neo encoders or quad encoders
-    encoderConfig();
+    motorConfig();
 
 
     zeroEncoders(false);
@@ -152,7 +137,9 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   public void periodic() {
     // This method will be called once per scheduler run
     drivePose = driveOdometry.update(gyro.getRotation2d(), getAvgLeftPosition(), getAvgRightPosition());
+    fieldPose.setRobotPose(drivePose);
     SmartDashboard.putNumber("driveAngle", drivePose.getRotation().getDegrees());
+    SmartDashboard.putData("FieldPosition", fieldPose);
   }
 
   public Command teleopDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier){
@@ -161,9 +148,9 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       run(
         () -> rawChassisSpeedDrive(
           new ChassisSpeeds(
-            DriveSubsystemConstants.kMaxDriveVelocity_Mps * fwdSupplier.getAsDouble(),
+            DriveSubsystemConstants.kMaxDriveVelocity_MPS * fwdSupplier.getAsDouble(),
             0, //vy is always zero because we use tank drive and it cannot move sideways
-            DriveSubsystemConstants.kMaxDriveRotations_Radps * rotSupplier.getAsDouble()
+            DriveSubsystemConstants.kMaxDriveRotations_RADPS * rotSupplier.getAsDouble()
           )
         )
       ).withName("arcadeDriveSmart"):
@@ -225,7 +212,13 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     );
   }
 
-  public void setPose2d(Pose2d newPose) {
+  public Command confirmShootingPosition(){
+    return run(() -> 
+    rawChassisSpeedDrive(new ChassisSpeeds(DriveSubsystemConstants.kConfirmShootDriveSpeed_MPS, 0, 0))
+  ).withTimeout(DriveSubsystemConstants.kConfirmShootDriveLength_SEC);
+  }
+
+  private void setPose2d(Pose2d newPose) {
     driveOdometry.resetPosition(
       gyro.getRotation2d(),
       new DifferentialDriveWheelPositions(getAvgLeftPosition(), getAvgRightPosition()),
@@ -233,33 +226,36 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     );
   }
 
-  public Pose2d getPose2d() {
-    return drivePose;
-  }
+  // public Pose2d getPose2d() {
+  //   return drivePose;
+  // }
 
   //get average (avg) values of encoders
-  public double getAvgLeftPosition() {
+  private double getAvgLeftPosition() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
       leftQuadEncoder.getDistance():
       (leftLeaderHallSensor.getPosition() + leftFollowerHallSensor.getPosition()) / 2
     );
   }
-  public double getAvgLeftVelocity() {
+
+  private double getAvgLeftVelocity() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
       leftQuadEncoder.getRate():
       (leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 2
     );
   }
-  public double getAvgRightPosition() {
+
+  private double getAvgRightPosition() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
       rightQuadEncoder.getDistance():
       (rightLeaderHallSensor.getPosition() + rightFollowerHallSensor.getPosition()) / 2
     );
   }
-  public double getAvgRightVelocity() {
+
+  private double getAvgRightVelocity() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
       rightQuadEncoder.getRate():
@@ -267,7 +263,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     );
   }
 
-  public double getAvgPosition(){
+  private double getAvgPosition(){
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
       (rightQuadEncoder.getDistance() + leftQuadEncoder.getDistance())/2:
@@ -275,7 +271,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     );
   }
 
-  public double getAvgVelocity(){
+  private double getAvgVelocity(){
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
       (rightQuadEncoder.getRate() + leftQuadEncoder.getRate())/2:
@@ -284,7 +280,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   }
 
   //reset all of the encoders to zero
-  public void zeroEncoders(boolean recalcOdometry) {
+  private void zeroEncoders(boolean recalcOdometry) {
     if(!DriveSubsystemConstants.kUseQuadEncoders){
       leftLeaderHallSensor.setPosition(0);
       leftFollowerHallSensor.setPosition(0);
@@ -298,7 +294,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     if(recalcOdometry) driveOdometry.resetPosition(gyro.getRotation2d(), 0, 0, drivePose);
   }
 
-  public void zeroGyro(boolean recalcOdometry) {
+  private void zeroGyro(boolean recalcOdometry) {
     gyro.reset();
     if(recalcOdometry) driveOdometry.resetPosition(new Rotation2d(0), getAvgLeftPosition(), getAvgRightPosition(), drivePose);
   }
@@ -311,45 +307,54 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     return sysIdRoutine.dynamic(direction);
   }
 
-  private void encoderConfig(){
-    
-    if(!DriveSubsystemConstants.kUseQuadEncoders){
+  private void motorConfig(){
 
-      //grab motor encoders as an easy to use object
-      leftLeaderHallSensor = leftLeaderMotor.getEncoder();
-      leftFollowerHallSensor = leftFollowerMotor.getEncoder();
-      rightLeaderHallSensor = rightLeaderMotor.getEncoder();
-      rightFollowerHallSensor = rightFollowerMotor.getEncoder();
+    leftLeaderMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
+    leftFollowerMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
+    rightLeaderMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
+    rightFollowerMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
+    leftLeaderMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
+    leftFollowerMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
+    rightLeaderMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
+    rightFollowerMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
 
-      //Encoder config (inversion and scaling from rotations and rpm to meters and m/s)
-      leftLeaderHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
-      leftFollowerHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
-      rightLeaderHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
-      rightFollowerHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    leftFollowerMotor.follow(leftLeaderMotor);
+    rightFollowerMotor.follow(rightLeaderMotor);
 
-      leftLeaderHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
-      leftFollowerHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
-      rightLeaderHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
-      rightFollowerHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    drive = new DifferentialDrive(leftLeaderMotor, rightLeaderMotor);
 
-    }else{
+    //grab motor encoders as an easy to use object
+    leftLeaderHallSensor = leftLeaderMotor.getEncoder();
+    leftFollowerHallSensor = leftFollowerMotor.getEncoder();
+    rightLeaderHallSensor = rightLeaderMotor.getEncoder();
+    rightFollowerHallSensor = rightFollowerMotor.getEncoder();
 
-      leftQuadEncoder = new Encoder(
-        DriveSubsystemConstants.kLeftEncoderPortA,
-        DriveSubsystemConstants.kLeftEncoderPortB,
-        DriveSubsystemConstants.kIsLeftInverted, 
-        EncodingType.k2X
-      );
-      rightQuadEncoder = new Encoder(
-        DriveSubsystemConstants.kRightEncoderPortA,
-        DriveSubsystemConstants.kRightEncoderPortB,
-        DriveSubsystemConstants.kIsRightInverted, 
-        EncodingType.k2X
-      );
+    //Encoder config (inversion and scaling from rotations and rpm to meters and m/s)
+    leftLeaderHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    leftFollowerHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    rightLeaderHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+    rightFollowerHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    leftLeaderHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    leftFollowerHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    rightLeaderHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+    rightFollowerHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
 
-      leftQuadEncoder.setDistancePerPulse(DriveSubsystemConstants.kDistancePerPulse);
-      rightQuadEncoder.setDistancePerPulse(DriveSubsystemConstants.kDistancePerPulse);
-    }
+
+    leftQuadEncoder = new Encoder(
+      DriveSubsystemConstants.kLeftEncoderPortA,
+      DriveSubsystemConstants.kLeftEncoderPortB,
+      DriveSubsystemConstants.kIsLeftInverted, 
+      EncodingType.k2X
+    );
+    rightQuadEncoder = new Encoder(
+      DriveSubsystemConstants.kRightEncoderPortA,
+      DriveSubsystemConstants.kRightEncoderPortB,
+      DriveSubsystemConstants.kIsRightInverted, 
+      EncodingType.k2X
+    );
+
+    leftQuadEncoder.setDistancePerPulse(DriveSubsystemConstants.kDistancePerPulse);
+    rightQuadEncoder.setDistancePerPulse(DriveSubsystemConstants.kDistancePerPulse);
 
   }
 

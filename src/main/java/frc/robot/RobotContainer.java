@@ -73,8 +73,8 @@ public class RobotContainer {
     //   )
     // );
 
-    // m_driverController.a().onTrue(m_intakeSubsystem.intakeCommand());
-    // m_driverController.b().onTrue(m_intakeSubsystem.setPosIdle());
+    // m_driverController.a().onTrue(m_intakeSubsystem.setIntake());
+    // m_driverController.b().onTrue(m_intakeSubsystem.setIdling());
     // m_driverController.x().onTrue(m_intakeSubsystem.prepHandoff());
 
 

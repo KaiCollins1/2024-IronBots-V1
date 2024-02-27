@@ -20,6 +20,7 @@ import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.IntakeSubsystemConstants;
 import frc.robot.Constants.ShooterSubsystemConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -48,7 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
     ShooterSubsystemConstants.kD
   );
 
-  private double speedSetpoint = 0;
+  private double speedSetpoint_MPS = 0;
 
   // Create the URCL compatable SysId routine
   private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
@@ -66,74 +67,53 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
 
-    topMotor = new CANSparkMax(ShooterSubsystemConstants.kTopRollerMotorID, MotorType.kBrushless);
-    bottomMotor = new CANSparkMax(ShooterSubsystemConstants.kBottomRollerMotorID, MotorType.kBrushless);
-    topMotor.setInverted(ShooterSubsystemConstants.kIsTopReversed);
-    bottomMotor.setInverted(ShooterSubsystemConstants.kIsBottomReversed);
-    topMotor.setSmartCurrentLimit(ShooterSubsystemConstants.kMotorCurrentLimit);
-    bottomMotor.setSmartCurrentLimit(ShooterSubsystemConstants.kMotorCurrentLimit);
-
-    topEncoder = topMotor.getEncoder();
-    bottomEncoder = bottomMotor.getEncoder();
-    topEncoder.setPositionConversionFactor(ShooterSubsystemConstants.kEncoderPositionScalingFactor);
-    bottomEncoder.setPositionConversionFactor(ShooterSubsystemConstants.kEncoderPositionScalingFactor);
-    topEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
-    bottomEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
-    topEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
-    topEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
-    bottomEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
-    bottomEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
+    motorConfig();
 
   }
 
   @Override
   public void periodic() {
     topMotor.setVoltage(
-      feedforward.calculate(speedSetpoint)+
-      topPID.calculate(topEncoder.getVelocity(), speedSetpoint)
+      feedforward.calculate(speedSetpoint_MPS)+
+      topPID.calculate(topEncoder.getVelocity(), speedSetpoint_MPS)
     );
     bottomMotor.setVoltage(
-      feedforward.calculate(speedSetpoint)+
-      bottomPID.calculate(bottomEncoder.getVelocity(), speedSetpoint)
+      feedforward.calculate(speedSetpoint_MPS)+
+      bottomPID.calculate(bottomEncoder.getVelocity(), speedSetpoint_MPS)
     );
+  }
+
+  public Command fireHigh(){
+    return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedHigh_MPS).withName("fireHigh");
+  }
+
+  public Command fireLow(){
+    return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedLow_MPS).withName("fireLow");
+  }
+
+  public Command handoffPrep(){
+    return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kHandoffAllowanceSpeed_MPS).withName("handoffPrep");
+  }
+
+  public Command disableShooter(){
+    return run(() -> speedSetpoint_MPS = 0).withName("diabled");
   }
 
   public Command tempSetShooterSpeed(BooleanSupplier highSpeedEnabled, BooleanSupplier lowSpeedEnabled){
     return (run(() -> 
-      speedSetpoint = (
-        highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh :
-        (lowSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedLow : 0)
+      speedSetpoint_MPS = (
+        highSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedHigh_MPS :
+        (lowSpeedEnabled.getAsBoolean() ? ShooterSubsystemConstants.kGoalSpeedLow_MPS : 0)
       )
     ));
   }
-
-  // private Command tempRawSetSpeedCommand(DoubleSupplier speed){
-  //   return (
-  //     ShooterSubsystemConstants.kUseSetSpeedSmart ? 
-  //     run(() -> {
-  //       topMotor.setVoltage(
-  //         feedforward.calculate(speed.getAsDouble())+
-  //         topPID.calculate(topEncoder.getVelocity(), speed.getAsDouble())
-  //       );
-  //       bottomMotor.setVoltage(
-  //         feedforward.calculate(speed.getAsDouble())+
-  //         bottomPID.calculate(bottomEncoder.getVelocity(), speed.getAsDouble())
-  //       );
-  //     }).withName("setSpeedSmart") 
-  //     :
-  //     run(() -> {
-  //       topMotor.set(speed.getAsDouble());
-  //       bottomMotor.set(speed.getAsDouble());
-  //     }).withName("setSpeedDumb")
-  //   );
-  // }
 
 
   public boolean velocityAboveGoal(boolean isGoalHighSpeed){
     return (
       getAvgSpeed()
       >= 
-      (isGoalHighSpeed ? ShooterSubsystemConstants.kGoalSpeedHigh : ShooterSubsystemConstants.kGoalSpeedLow) - 1
+      (isGoalHighSpeed ? ShooterSubsystemConstants.kGoalSpeedHigh_MPS : ShooterSubsystemConstants.kGoalSpeedLow_MPS) - 1
     );
   }
 
@@ -147,6 +127,26 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysIdRoutine.dynamic(direction);
+  }
+
+  private void motorConfig(){
+    topMotor = new CANSparkMax(ShooterSubsystemConstants.kTopRollerMotorID, MotorType.kBrushless);
+    bottomMotor = new CANSparkMax(ShooterSubsystemConstants.kBottomRollerMotorID, MotorType.kBrushless);
+    topMotor.setInverted(ShooterSubsystemConstants.kIsTopReversed);
+    bottomMotor.setInverted(ShooterSubsystemConstants.kIsBottomReversed);
+    topMotor.setSmartCurrentLimit(ShooterSubsystemConstants.kMotorCurrentLimit_AMP);
+    bottomMotor.setSmartCurrentLimit(ShooterSubsystemConstants.kMotorCurrentLimit_AMP);
+
+    topEncoder = topMotor.getEncoder();
+    bottomEncoder = bottomMotor.getEncoder();
+    topEncoder.setPositionConversionFactor(ShooterSubsystemConstants.kEncoderPositionScalingFactor);
+    bottomEncoder.setPositionConversionFactor(ShooterSubsystemConstants.kEncoderPositionScalingFactor);
+    topEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
+    bottomEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
+    topEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
+    topEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
+    bottomEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
+    bottomEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
   }
 
 }
