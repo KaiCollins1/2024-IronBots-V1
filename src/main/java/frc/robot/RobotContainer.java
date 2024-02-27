@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -55,23 +51,26 @@ public class RobotContainer {
       )
     );
 
-    // CommandScheduler.getInstance().setDefaultCommand(
-    //   m_shooterSubsystem, 
-    //   m_shooterSubsystem.tempSetShooterSpeed(
-    //     m_driverController.a(), //high speed
-    //     m_driverController.b() //low speed
-    //   )
-    // );
+    CommandScheduler.getInstance().setDefaultCommand(
+      m_shooterSubsystem, 
+      m_shooterSubsystem.setDisabled()
+    );
 
-    // CommandScheduler.getInstance().setDefaultCommand(
-    //   m_intakeSubsystem,
-    //   m_intakeSubsystem.tempDefaultCommand(
-    //     m_driverController.povUp(),     //move up
-    //     m_driverController.povDown(),   //move down
-    //     m_driverController.povLeft(),   //move in
-    //     m_driverController.povRight()   //move out
-    //   )
-    // );
+    CommandScheduler.getInstance().setDefaultCommand(
+      m_intakeSubsystem,
+      m_intakeSubsystem.setPrepHandoff()
+    );
+
+    m_driverController.rightBumper().whileTrue(
+      m_intakeSubsystem.setIntake()
+    ).onFalse(
+      m_shooterSubsystem.setHandoffAllowance()
+    );
+
+    m_driverController.leftBumper().whileTrue(
+      m_shooterSubsystem.setFireLow()
+    );
+
 
     // m_driverController.a().onTrue(m_intakeSubsystem.setIntake());
     // m_driverController.b().onTrue(m_intakeSubsystem.setIdling());

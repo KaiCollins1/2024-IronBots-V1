@@ -20,7 +20,6 @@ import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.IntakeSubsystemConstants;
 import frc.robot.Constants.ShooterSubsystemConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -83,19 +82,23 @@ public class ShooterSubsystem extends SubsystemBase {
     );
   }
 
-  public Command fireHigh(){
+  public Command setFireHigh(){
     return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedHigh_MPS).withName("fireHigh");
   }
 
-  public Command fireLow(){
+  public Command setFireLow(){
     return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedLow_MPS).withName("fireLow");
   }
 
-  public Command handoffPrep(){
-    return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kHandoffAllowanceSpeed_MPS).withName("handoffPrep");
+  public Command setHandoffAllowance(){
+    return run(() -> 
+      speedSetpoint_MPS = ShooterSubsystemConstants.kHandoffAllowanceSpeed_MPS
+    ).withTimeout(
+      ShooterSubsystemConstants.kHandoffAllowanceTime_SEC
+    ).withName("handoffPrep");
   }
 
-  public Command disableShooter(){
+  public Command setDisabled(){
     return run(() -> speedSetpoint_MPS = 0).withName("diabled");
   }
 
@@ -143,10 +146,10 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomEncoder.setPositionConversionFactor(ShooterSubsystemConstants.kEncoderPositionScalingFactor);
     topEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
     bottomEncoder.setVelocityConversionFactor(ShooterSubsystemConstants.kEncoderVelocityScalingFactor);
-    topEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
-    topEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
-    bottomEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth);
-    bottomEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod);
+    topEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth_CNT);
+    topEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod_MS);
+    bottomEncoder.setAverageDepth(ShooterSubsystemConstants.kFilterDepth_CNT);
+    bottomEncoder.setMeasurementPeriod(ShooterSubsystemConstants.kFilterPeriod_MS);
   }
 
 }

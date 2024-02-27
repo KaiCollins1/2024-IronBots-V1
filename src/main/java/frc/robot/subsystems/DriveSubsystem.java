@@ -214,8 +214,8 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
 
   public Command confirmShootingPosition(){
     return run(() -> 
-    rawChassisSpeedDrive(new ChassisSpeeds(DriveSubsystemConstants.kConfirmShootDriveSpeed_MPS, 0, 0))
-  ).withTimeout(DriveSubsystemConstants.kConfirmShootDriveLength_SEC);
+      drive.arcadeDrive(DriveSubsystemConstants.kConfirmShootDriveSpeed_PCT, 0)
+    ).withTimeout(DriveSubsystemConstants.kConfirmShootDriveLength_SEC);
   }
 
   private void setPose2d(Pose2d newPose) {

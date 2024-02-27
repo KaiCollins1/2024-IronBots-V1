@@ -28,12 +28,10 @@ public final class Constants {
     //major drive config changes
     public static final boolean kUseSmartTeleopDrive = false;
     public static final boolean kUseQuadEncoders = true;
-    public static final double kConfirmShootDriveSpeed_MPS = 0;
-    public static final double kConfirmShootDriveLength_SEC = 0;
-    //meters per second max velocity when at full throttle, and radians per second max rotation when at full throttle
+    public static final double kConfirmShootDriveSpeed_PCT = -0.1;
+    public static final double kConfirmShootDriveLength_SEC = 0.5;
     public static final double kMaxDriveVelocity_MPS = 0;
     public static final double kMaxDriveRotations_RADPS = kMaxDriveVelocity_MPS * 2 * Math.PI;
-    //max current for driving
     public static final int kMotorCurrentLimit_AMP = 70;
     
 
@@ -76,8 +74,9 @@ public final class Constants {
     //subsystem config
     public static final boolean kUseSetSpeedSmart = true;
     public static final double kHandoffAllowanceSpeed_MPS = 2;
-    public static final double kGoalSpeedLow_MPS = kUseSetSpeedSmart ? 11.5 : 0.6;
-    public static final double kGoalSpeedHigh_MPS = kUseSetSpeedSmart ? 13.5 : 1;
+    public static final double kHandoffAllowanceTime_SEC = 2;
+    public static final double kGoalSpeedLow_MPS = 11.5;
+    public static final double kGoalSpeedHigh_MPS = 13.5;
 
     //motor constants
     public static final int kTopRollerMotorID = 8;
@@ -99,8 +98,8 @@ public final class Constants {
     //converts between revolutions/rpm to meters and m/s
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(4)*Math.PI);
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(4)*Math.PI)/60;
-    public static final int kFilterDepth = 8;
-    public static final int kFilterPeriod = 8;
+    public static final int kFilterDepth_CNT = 8;
+    public static final int kFilterPeriod_MS = 8;
 
 
   }
@@ -109,10 +108,12 @@ public final class Constants {
 
     //subsystem config
     public static final boolean kUseAbsoluteEncoder = true;
-    public static final boolean kUseSmartMoveNRollDrive = false;
-
-    public static final double kGoalIntakeSpeed_MPS = kUseSmartMoveNRollDrive ? 3.0 : 0.75;
-    public static final double kGoalHandoffSpeed_MPS = kUseSmartMoveNRollDrive ? 4.0 : 0.90;
+    //public static final boolean kUseSmartMoveNRollDrive = false;
+    public static final double kConfirmNoteOwningDelay_SEC = 0.75;
+    public static final double kGoalIntakeSpeed_MPS =  -0.25;
+    public static final double kGoalHandoffSpeed_MPS = .8;
+    // public static final double kGoalIntakeSpeed_MPS =  Units.inchesToMeters(14);
+    // public static final double kGoalHandoffSpeed_MPS = Units.inchesToMeters(40);
 
     public static final double kInsideBotPos_DEG = 280-1;
     public static final double kIntakingPos_DEG = 56+1;
@@ -132,6 +133,8 @@ public final class Constants {
     public static final double kMI = 0;
 
     //motor constants
+    public static final boolean kMovementMotorReversed = false;
+    public static final boolean kRollerMotorReversed = true;
     public static final int kMovementMotorID = 10;
     public static final int kRollerMotorID = 11;
     public static final int kMotorCurrentLimit_AMP = 30;
@@ -148,7 +151,6 @@ public final class Constants {
     public static final int kRightLimitSwitchPort = 7;
     public static final int kMiddleLimitSwitchPort = 8;
     public static final int kLeftLimitSwitchPort = 9;
-    public static final double kConfirmNoteOwningDelay_SEC = 0.75;
 
   }
 }

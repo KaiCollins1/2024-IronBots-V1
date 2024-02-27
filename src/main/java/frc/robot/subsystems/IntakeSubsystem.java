@@ -7,8 +7,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -97,7 +95,7 @@ public class IntakeSubsystem extends SubsystemBase {
     //  rollerFeedforward.calculate(rollerSetpoint_MPS)+
     //  rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
     // );
-    rollerMotor.set(0);
+    rollerMotor.set(rollerSetpoint_MPS);
 
     SmartDashboard.putNumber("Intake Angle", getAngle());
     SmartDashboard.putNumber("Intake Speed", rollerHallSensor.getVelocity());
@@ -105,7 +103,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
 
-  public Command prepHandoff(){
+  public Command setPrepHandoff(){
     return run(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
       rollerSetpoint_MPS = 0;
@@ -138,7 +136,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // }
 
   public Command teleopNoteCollection(){
-    return setIntake().until(hasNote).andThen(prepHandoff());
+    return setIntake().until(hasNote).andThen(setPrepHandoff());
   }
 
   // public boolean getOwnsNote(){
@@ -174,6 +172,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     rollerMotor.setSmartCurrentLimit(IntakeSubsystemConstants.kMotorCurrentLimit_AMP);
     movementMotor.setSmartCurrentLimit(IntakeSubsystemConstants.kMotorCurrentLimit_AMP);
+
+    rollerMotor.setInverted(IntakeSubsystemConstants.kRollerMotorReversed);
+    movementMotor.setInverted(IntakeSubsystemConstants.kMovementMotorReversed);
     
     rollerHallSensor = rollerMotor.getEncoder();
     rollerHallSensor.setPositionConversionFactor(IntakeSubsystemConstants.kRollerHallSensorPositionConversionFactor);
