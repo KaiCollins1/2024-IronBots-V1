@@ -159,7 +159,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       run(
         () -> drive.arcadeDrive(
           fwdSupplier.getAsDouble(), 
-          rotSupplier.getAsDouble(), 
+          0.7 * rotSupplier.getAsDouble(), 
           true
         )
       ).withName("arcadeDriveDumb")

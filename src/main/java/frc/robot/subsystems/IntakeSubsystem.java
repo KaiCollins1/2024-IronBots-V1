@@ -90,16 +90,15 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    
     movementMotor.setVoltage(movementPID.calculate(getAngle(), intakeSetpoint_DEG));
-    // rollerMotor.setVoltage(
-    //  rollerFeedforward.calculate(rollerSetpoint_MPS)+
-    //  rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
-    // );
-    rollerMotor.set(rollerSetpoint_MPS);
+    rollerMotor.setVoltage(
+     rollerFeedforward.calculate(rollerSetpoint_MPS)+
+     rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
+    );
 
     SmartDashboard.putNumber("Intake Angle", getAngle());
-    SmartDashboard.putNumber("Intake Speed", rollerHallSensor.getVelocity());
+    SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());
 
   }
 
@@ -138,7 +137,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // }
 
   public Command teleopNoteCollection(){
-    return setIntake().until(hasNote).andThen(setPrepHandoff());
+    return setIntake().until(hasNote).withTimeout(10).andThen(setPrepHandoff());
   }
 
   // public boolean getOwnsNote(){
@@ -186,7 +185,7 @@ public class IntakeSubsystem extends SubsystemBase {
     movementHallSensor.setPositionConversionFactor(IntakeSubsystemConstants.kMovementHallSensorPositionConversionFactor);
     movementHallSensor.setVelocityConversionFactor(IntakeSubsystemConstants.kMovementHallSensorVelocityConversionFactor);
 
-    movementAbsEncoder = new DutyCycleEncoder(IntakeSubsystemConstants.kMovementAbsEncoderPin);
+    movementAbsEncoder = new DutyCycleEncoder(IntakeSubsystemConstants.kMovementAbsEncoderPort);
     movementAbsEncoder.setDistancePerRotation(IntakeSubsystemConstants.kMovementAbsEncoderDistancePerRoatation);
   }
 }

@@ -121,11 +121,11 @@ public final class Constants {
     public static final double kIdlePos_DEG = 200;
 
     //roller feedforward constants
-    public static final double kRS = 0;
-    public static final double kRV = 0;
-    public static final double kRA = 0;
+    public static final double kRS = 0.38732;
+    public static final double kRV = 0.066998;
+    public static final double kRA = 0.0063037;
     //roller PID constants
-    public static final double kRP = 0;
+    public static final double kRP = 0.0017483;
     public static final double kRD = 0;
     public static final double kRI = 0;
     //movement PID constants
@@ -145,7 +145,7 @@ public final class Constants {
     public static final double kRollerHallSensorPositionConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5*60);
     public static final double kMovementHallSensorPositionConversionFactor = 360/(20);
     public static final double kMovementHallSensorVelocityConversionFactor = 360/(20*60);
-    public static final int kMovementAbsEncoderPin = 5; //3pin with white wire
+    public static final int kMovementAbsEncoderPort = 5; //3pin with white wire
     public static final double kMovementAbsEncoderDistancePerRoatation = 360;
 
     //sensor constants
