@@ -7,9 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.GeneralConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -19,7 +20,7 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
-  private final CommandXboxController m_driverController = new CommandXboxController(ControllerConstants.kDriverControllerPort);
+  private final CommandXboxController m_driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
 
   // private final SendableChooser<Command> autoChooser;
 
@@ -68,7 +69,13 @@ public class RobotContainer {
     );
 
     m_driverController.leftBumper().whileTrue(
-      m_shooterSubsystem.setFireLow()
+      m_driveSubsystem.confirmShootingPosition()
+      .alongWith(
+        m_shooterSubsystem.setFireLow().until(m_shooterSubsystem.velocityAboveLowGoal())
+      )
+      .andThen(
+        m_intakeSubsystem.setHandoff().alongWith(m_shooterSubsystem.setFireLow())
+      )
     );
 
 

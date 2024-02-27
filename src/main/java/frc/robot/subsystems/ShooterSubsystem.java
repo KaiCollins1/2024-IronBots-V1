@@ -19,6 +19,7 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ShooterSubsystemConstants;
 
@@ -93,8 +94,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command setHandoffAllowance(){
     return run(() -> 
       speedSetpoint_MPS = ShooterSubsystemConstants.kHandoffAllowanceSpeed_MPS
-    ).withTimeout(
-      ShooterSubsystemConstants.kHandoffAllowanceTime_SEC
+    ).andThen(new WaitCommand(ShooterSubsystemConstants.kHandoffAllowanceTime_SEC)
     ).withName("handoffPrep");
   }
 
@@ -111,13 +111,12 @@ public class ShooterSubsystem extends SubsystemBase {
     ));
   }
 
+  public BooleanSupplier velocityAboveHighGoal(){
+    return () -> getAvgSpeed() >= (ShooterSubsystemConstants.kGoalSpeedHigh_MPS) - 1;
+  }
 
-  public boolean velocityAboveGoal(boolean isGoalHighSpeed){
-    return (
-      getAvgSpeed()
-      >= 
-      (isGoalHighSpeed ? ShooterSubsystemConstants.kGoalSpeedHigh_MPS : ShooterSubsystemConstants.kGoalSpeedLow_MPS) - 1
-    );
+  public BooleanSupplier velocityAboveLowGoal(){
+    return () -> getAvgSpeed() >= (ShooterSubsystemConstants.kGoalSpeedHigh_MPS) - 1;
   }
 
   public double getAvgSpeed(){

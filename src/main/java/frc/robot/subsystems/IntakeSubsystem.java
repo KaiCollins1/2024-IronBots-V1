@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.IntakeSubsystemConstants;
@@ -109,19 +110,20 @@ public class IntakeSubsystem extends SubsystemBase {
       rollerSetpoint_MPS = 0;
     }).withName("prep4Handoff"); 
   }
+
+  public Command setHandoff(){
+    return run(() -> {
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
+      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
+    }).andThen(new WaitCommand(IntakeSubsystemConstants.kHandoffTime_SEC))
+    .withName("handing off"); 
+  }
   
   public Command setIdling(){
     return run(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
       rollerSetpoint_MPS = 0;
     }).withName("idling"); 
-  }
-
-  public Command setHandoff(){
-    return run(() -> {
-      intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
-      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
-    }).withName("handing off"); 
   }
 
   public Command setIntake(){

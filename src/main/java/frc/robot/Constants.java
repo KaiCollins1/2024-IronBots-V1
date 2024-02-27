@@ -15,7 +15,7 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class ControllerConstants {
+  public static class GeneralConstants {
     public static final int kDriverControllerPort = 0;
   }
 
@@ -112,6 +112,7 @@ public final class Constants {
     public static final double kConfirmNoteOwningDelay_SEC = 0.75;
     public static final double kGoalIntakeSpeed_MPS =  -0.25;
     public static final double kGoalHandoffSpeed_MPS = .8;
+    public static final double kHandoffTime_SEC = 1;
     // public static final double kGoalIntakeSpeed_MPS =  Units.inchesToMeters(14);
     // public static final double kGoalHandoffSpeed_MPS = Units.inchesToMeters(40);
 
@@ -151,6 +152,16 @@ public final class Constants {
     public static final int kRightLimitSwitchPort = 7;
     public static final int kMiddleLimitSwitchPort = 8;
     public static final int kLeftLimitSwitchPort = 9;
+
+  }
+
+  public static class ClimberSubsystemConstants {
+
+    public static final int kRightMotorID = 12;
+    public static final int kLeftMotorID = 13;
+
+    public static final boolean kIsRightInverted = true;
+    public static final boolean kIsLeftInverted = false;
 
   }
 }

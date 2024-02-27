@@ -37,7 +37,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveSubsystemConstants;
 
@@ -215,7 +217,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   public Command confirmShootingPosition(){
     return run(() -> 
       drive.arcadeDrive(DriveSubsystemConstants.kConfirmShootDriveSpeed_PCT, 0)
-    ).withTimeout(DriveSubsystemConstants.kConfirmShootDriveLength_SEC);
+    ).repeatedly().withTimeout(DriveSubsystemConstants.kConfirmShootDriveLength_SEC);
   }
 
   private void setPose2d(Pose2d newPose) {
