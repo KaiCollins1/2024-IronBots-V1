@@ -4,11 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.GeneralConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -36,6 +36,8 @@ public class RobotContainer {
     //roboRIO file system just like you would browse files on your computer.
     //https://docs.wpilib.org/en/stable/docs/software/roborio-info/roborio-ftp.html#ftp
     
+     CameraServer.startAutomaticCapture();
+
     // autoChooser = AutoBuilder.buildAutoChooser();
     // SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -62,18 +64,20 @@ public class RobotContainer {
     );
 
     m_driverController.rightBumper().whileTrue(
-      m_intakeSubsystem.setIntake()
+      m_intakeSubsystem.setIntake().repeatedly()
     ).onFalse(
       m_shooterSubsystem.setHandoffAllowance()
     );
 
     m_driverController.leftBumper().whileTrue(
-      m_driveSubsystem.confirmShootingPosition()
-      .alongWith(
-        m_shooterSubsystem.setFireLow().until(m_shooterSubsystem.velocityAboveLowGoal())
+      m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
+      .deadlineWith(
+        m_driveSubsystem.confirmShootingPosition().repeatedly()
       )
       .andThen(
-        m_intakeSubsystem.setHandoff().alongWith(m_shooterSubsystem.setFireLow())
+        m_intakeSubsystem.setHandoff().repeatedly()
+        .alongWith(m_shooterSubsystem.setFireLow().repeatedly())
+        .alongWith(m_driveSubsystem.confirmShootingPosition().repeatedly())
       )
     );
 

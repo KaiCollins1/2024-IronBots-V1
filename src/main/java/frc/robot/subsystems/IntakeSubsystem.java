@@ -82,7 +82,7 @@ public class IntakeSubsystem extends SubsystemBase {
     leftLimitSwitch = new DigitalInput(IntakeSubsystemConstants.kLeftLimitSwitchPort);
 
     hasNote = new Trigger(() -> 
-      (rightLimitSwitch.get() || middleLimitSwitch.get() || leftLimitSwitch.get())
+      (!rightLimitSwitch.get() || !middleLimitSwitch.get() || !leftLimitSwitch.get())
     ).debounce(IntakeSubsystemConstants.kConfirmNoteOwningDelay_SEC);
 
   }
@@ -99,6 +99,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Intake Angle", getAngle());
     SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());
+    SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
+    SmartDashboard.putBoolean("middleLimit", !middleLimitSwitch.get());
+    SmartDashboard.putBoolean("rightLimit", !rightLimitSwitch.get());
 
   }
 
