@@ -85,11 +85,11 @@ public class ShooterForSAM6026 extends SubsystemBase {
   //at the start of testing, make sure to only do like 5 degrees, and then increase this to 10 degrees, 15, etc
   //you don't want to hurt the shooter
   public Command testingCommandIncreaseByDegrees(double degrees){
-    return run(() -> currentSetpoint_DEG = currentSetpoint_DEG + degrees);
+    return runOnce(() -> currentSetpoint_DEG = currentSetpoint_DEG + degrees);
   }
 
   public Command testingCommandDecreaseByDegrees(double degrees){
-    return run(() -> currentSetpoint_DEG = currentSetpoint_DEG - degrees);
+    return runOnce(() -> currentSetpoint_DEG = currentSetpoint_DEG - degrees);
   }
 
   //use this command to set your shooter to any angle you want
@@ -107,9 +107,9 @@ public class ShooterForSAM6026 extends SubsystemBase {
   /*
     CommandXboxController m_driverController = new CommandXboxController(kWhateverYourPortIs);
 
-    m_driverController.a().whileTrue(m_shooterSubsystem.testingCommandIncreaseByDegrees(5);
+    m_driverController.a().onTrue(m_shooterSubsystem.testingCommandIncreaseByDegrees(5);
     
-    m_driverController.b().whileTrue(m_shooterSubsystem.testingCommandDecreaseByDegrees(5);
+    m_driverController.b().whileTrue(m_shooterSubsystem.goToXYZAngleCommand(5);
    */
 
   //you can also make a default command that will run when no other command is being ran with the subsystem
