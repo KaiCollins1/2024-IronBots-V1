@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -80,6 +81,10 @@ public class ShooterForSAM6026 extends SubsystemBase {
 
     //set the voltage of the motor to the calculated voltage by the PID
     movementMotor.setVoltage(movementPID.calculate(movementEncoder.get(), currentSetpoint_DEG));
+
+    //these put your data on smartdashboard for easy access
+    SmartDashboard.putNumber("setpoint", currentSetpoint_DEG);
+    SmartDashboard.putNumber("shooterPosition", movementEncoder.get());
   }
 
   //at the start of testing, make sure to only do like 5 degrees, and then increase this to 10 degrees, 15, etc
