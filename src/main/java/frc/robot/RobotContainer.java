@@ -31,10 +31,12 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
+    //collects the note!
     NamedCommands.registerCommand("intakeCollect", 
       m_intakeSubsystem.setIntake().repeatedly().withTimeout(2)
       .andThen(m_shooterSubsystem.setHandoffAllowance())
     );
+    //scores the note
     NamedCommands.registerCommand("straightShoot", 
       m_driveSubsystem.confirmShootingPosition().repeatedly()
       .alongWith(
@@ -46,12 +48,16 @@ public class RobotContainer {
         .alongWith(m_intakeSubsystem.setPrepHandoff())
       )
     );
+    //satisfies differential drive motor watchdog DDMW for when Brittany is doing nothing
+    NamedCommands.registerCommand("satisfyDDMW", 
+      m_driveSubsystem.doNothing().repeatedly()
+    );
 
     CameraServer.startAutomaticCapture();
 
     //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
     //To FTP to the roboRIO, open a Windows Explorer window. In the address bar, 
-    //type ftp://roboRIO-TEAM-frc.local and press enter. You can now browse the 
+    //type ftp://roboRIO-4983-frc.local and press enter. You can now browse the 
     //roboRIO file system just like you would browse files on your computer.
     //https://docs.wpilib.org/en/stable/docs/software/roborio-info/roborio-ftp.html#ftp
     

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7410453461395887,
-      "y": 4.388081878131554
+      "x": 2,
+      "y": 2
     },
-    "rotation": -60.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -15,12 +15,6 @@
           "type": "named",
           "data": {
             "name": "straightShoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SLeaveS"
           }
         },
         {
