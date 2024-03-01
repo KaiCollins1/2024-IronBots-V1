@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3447749235904711,
+        "x": 2.4442262677013367,
         "y": 5.551508791145547
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.344774923590466,
+        "x": 3.4442262677013313,
         "y": 5.551508791145547
       },
       "isLocked": false,
-      "linkedName": "SpeakerMiddleSide"
+      "linkedName": "NoteM"
     },
     {
       "anchor": {
-        "x": 4.579473194034107,
-        "y": 5.7732087393999345
+        "x": 4.863178241562208,
+        "y": 6.10924384639467
       },
       "prevControl": {
-        "x": 4.008172577748664,
-        "y": 5.392341661876307
+        "x": 4.291877625276765,
+        "y": 5.728376768871042
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0

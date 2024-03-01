@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7410453461395887,
-      "y": 4.388081878131554
+      "x": 0.7764003243985318,
+      "y": 6.717231094569524
     },
-    "rotation": -60.0
+    "rotation": 63.0
   },
   "command": {
     "type": "sequential",
@@ -20,25 +20,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SGrabNoteS"
+            "pathName": "AGrabNoteA"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SReturnNoteS"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "straightShoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SLeaveS"
+            "pathName": "ALeaveA"
           }
         }
       ]

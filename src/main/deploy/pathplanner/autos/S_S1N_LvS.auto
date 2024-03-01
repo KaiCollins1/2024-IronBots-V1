@@ -20,24 +20,6 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SGrabNoteS"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SReturnNoteS"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "straightShoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
             "pathName": "SLeaveS"
           }
         }

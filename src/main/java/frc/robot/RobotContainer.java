@@ -4,11 +4,16 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.GeneralConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -21,14 +26,28 @@ public class RobotContainer {
 
   private final CommandXboxController m_driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
 
-  // private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     configureBindings();
 
-    // NamedCommands.registerCommand("intakeCollect", null);
-    // NamedCommands.registerCommand("straightShoot", null);
+    NamedCommands.registerCommand("intakeCollect", 
+      m_intakeSubsystem.setIntake().repeatedly().withTimeout(2)
+      .andThen(m_shooterSubsystem.setHandoffAllowance())
+    );
+    NamedCommands.registerCommand("straightShoot", 
+      m_driveSubsystem.confirmShootingPosition().repeatedly()
+      .alongWith(
+        m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
+        .andThen(m_intakeSubsystem.setHandoff().repeatedly()
+        .alongWith(m_shooterSubsystem.setFireLow().repeatedly()))
+      ).withTimeout(3).andThen(
+        m_shooterSubsystem.setDisabled()
+        .alongWith(m_intakeSubsystem.setPrepHandoff())
+      )
+    );
 
+    CameraServer.startAutomaticCapture();
 
     //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
     //To FTP to the roboRIO, open a Windows Explorer window. In the address bar, 
@@ -36,10 +55,8 @@ public class RobotContainer {
     //roboRIO file system just like you would browse files on your computer.
     //https://docs.wpilib.org/en/stable/docs/software/roborio-info/roborio-ftp.html#ftp
     
-     CameraServer.startAutomaticCapture();
-
-    // autoChooser = AutoBuilder.buildAutoChooser();
-    // SmartDashboard.putData("Auto Chooser", autoChooser);
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
 
@@ -64,7 +81,7 @@ public class RobotContainer {
     );
 
     m_driverController.rightBumper().whileTrue(
-      m_intakeSubsystem.setIntake().repeatedly()
+      m_intakeSubsystem.setIntake()
     ).onFalse(
       m_shooterSubsystem.setHandoffAllowance()
     );
@@ -88,11 +105,11 @@ public class RobotContainer {
 
 
     // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
-    // m_driverController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // m_driverController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
+    m_driverController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    
     // m_driverController.a().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // m_driverController.b().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     // m_driverController.x().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
@@ -107,8 +124,19 @@ public class RobotContainer {
 
   //@return the command to run in autonomous
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return null;
+    return autoChooser.getSelected();
+    // return null;
+    // return m_driveSubsystem.doNothing().withTimeout(0.5).andThen(
+    // m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
+    //   .deadlineWith(
+    //     m_driveSubsystem.confirmShootingPosition().repeatedly()
+    //   )
+    //   .andThen(
+    //     m_intakeSubsystem.setHandoff().repeatedly()
+    //     .alongWith(m_shooterSubsystem.setFireLow().repeatedly())
+    //     .alongWith(m_driveSubsystem.confirmShootingPosition().repeatedly()).withTimeout(2)
+    //   )
+    //   .andThen(m_driveSubsystem.teleopDriveCommand(() -> -0.5, () -> 0).repeatedly().withTimeout(2)));
   }
 
   public void updateSchedulerTelemetry() {

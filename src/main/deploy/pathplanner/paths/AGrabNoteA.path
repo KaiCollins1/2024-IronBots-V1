@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7329132124464048,
-        "y": 6.6711587604541185
+        "x": 0.7764003243985318,
+        "y": 6.717231094569524
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1085009296837791,
-        "y": 7.362905283213681
+        "x": 1.1623862961500528,
+        "y": 7.533755031731888
       },
       "isLocked": false,
       "linkedName": "SpeakerAmpSide"
     },
     {
       "anchor": {
-        "x": 2.2579976738900847,
-        "y": 6.970219554474197
+        "x": 2.542840434518079,
+        "y": 6.975699103455452
       },
       "prevControl": {
-        "x": 1.478126991341702,
-        "y": 6.970219554474197
+        "x": 1.762969751969696,
+        "y": 6.975699103455452
       },
       "nextControl": null,
       "isLocked": false,
@@ -50,7 +50,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0

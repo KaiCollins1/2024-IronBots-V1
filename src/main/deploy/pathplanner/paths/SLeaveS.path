@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6910016977928695,
-        "y": 4.385764385563857
+        "x": 0.7410453461395887,
+        "y": 4.388081878131554
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.69100169779287,
-        "y": 0.9216627704261029
+        "x": 2.7410453461395896,
+        "y": 0.9239802629937994
       },
       "isLocked": false,
       "linkedName": "SpeakerSourceSide"
@@ -32,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.351171298833826,
-      "y": 5.537433881885308
+      "x": 1.3447749235904711,
+      "y": 5.551508791145547
     },
-    "rotation": 0.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -26,19 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MReturnNoteM"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "straightShoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "MLeaveSideST"
+            "pathName": "MLeaveStage"
           }
         }
       ]

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7225691234732697,
-      "y": 6.695397489965702
+      "x": 0.7764003243985318,
+      "y": 6.717231094569524
     },
     "rotation": 60.0
   },
@@ -33,6 +33,12 @@
           "type": "named",
           "data": {
             "name": "straightShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AGrabNoteA"
           }
         },
         {

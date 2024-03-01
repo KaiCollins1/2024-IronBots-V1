@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7342217468429573,
-        "y": 6.680649035317731
+        "x": 2.542840434518079,
+        "y": 6.975699103455452
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0791606511824932,
-        "y": 7.455394499214557
+        "x": 3.2978830306043876,
+        "y": 6.975699103455452
       },
       "isLocked": false,
-      "linkedName": "SpeakerAmpSide"
+      "linkedName": "NoteA"
     },
     {
       "anchor": {
-        "x": 6.529149900405065,
-        "y": 7.459905797004577
+        "x": 4.951575898621187,
+        "y": 6.970219554474197
       },
       "prevControl": {
-        "x": 5.529149900405065,
-        "y": 7.459905797004577
+        "x": 3.935464595795977,
+        "y": 6.970219554474197
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": "AmpSide",
   "previewStartingState": {
-    "rotation": 58.547938988000524,
+    "rotation": -1.0689771986166088,
     "velocity": 0
   },
   "useDefaultConstraints": true

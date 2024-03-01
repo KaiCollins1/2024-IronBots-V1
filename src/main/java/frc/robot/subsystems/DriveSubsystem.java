@@ -12,6 +12,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -86,7 +87,7 @@ private Field2d fieldPose = new Field2d();
 // Create the URCL compatable SysId routine
 private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   // new SysIdRoutine.Config(Volts.of(0.5), Volts.of(7), Seconds.of(10)),
-  new SysIdRoutine.Config(Volts.per(Seconds).of(0.5), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty
+  new SysIdRoutine.Config(Volts.per(Seconds).of(0.75), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty
   new SysIdRoutine.Mechanism(
     (Measure<Voltage> volts) -> {
       leftLeaderMotor.setVoltage(volts.in(Volts));
@@ -99,8 +100,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
 
 
   /** Creates a new DriveSybsystem. */
-  public DriveSubsystem() {
-
+  public DriveSubsystem(){
     motorConfig();
 
 
@@ -321,6 +321,16 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     leftFollowerMotor.setInverted(DriveSubsystemConstants.kIsLeftInverted);
     rightLeaderMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
     rightFollowerMotor.setInverted(DriveSubsystemConstants.kIsRightInverted);
+
+    leftLeaderMotor.setIdleMode(IdleMode.kBrake);
+    leftFollowerMotor.setIdleMode(IdleMode.kBrake);
+    rightLeaderMotor.setIdleMode(IdleMode.kBrake);
+    rightFollowerMotor.setIdleMode(IdleMode.kBrake);
+
+    // leftLeaderMotor.setIdleMode(IdleMode.kCoast);
+    // leftFollowerMotor.setIdleMode(IdleMode.kCoast);
+    // rightLeaderMotor.setIdleMode(IdleMode.kCoast);
+    // rightFollowerMotor.setIdleMode(IdleMode.kCoast);
 
     leftFollowerMotor.follow(leftLeaderMotor);
     rightFollowerMotor.follow(rightLeaderMotor);

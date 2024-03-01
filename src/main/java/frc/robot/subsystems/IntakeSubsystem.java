@@ -132,7 +132,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return run(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
-    }).withName("intaking");
+    }).unless(hasNote).repeatedly().withName("intaking");
   }
 
   // public Command autoCollectNote(){
