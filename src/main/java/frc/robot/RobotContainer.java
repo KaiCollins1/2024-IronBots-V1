@@ -43,10 +43,10 @@ public class RobotContainer {
         m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
         .andThen(m_intakeSubsystem.setHandoff().repeatedly()
         .alongWith(m_shooterSubsystem.setFireLow().repeatedly()))
-      ).withTimeout(3).andThen(
+      ).withTimeout(2).andThen(
         m_shooterSubsystem.setDisabled()
         .alongWith(m_intakeSubsystem.setPrepHandoff())
-      )
+      ).withTimeout(1)
     );
     //satisfies differential drive motor watchdog DDMW for when Brittany is doing nothing
     NamedCommands.registerCommand("satisfyDDMW", 
