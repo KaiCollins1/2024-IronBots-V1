@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.GeneralConstants;
@@ -37,16 +39,32 @@ public class RobotContainer {
       .andThen(m_shooterSubsystem.setHandoffAllowance())
     );
     //scores the note
-    NamedCommands.registerCommand("straightShoot", 
-      m_driveSubsystem.confirmShootingPosition().repeatedly()
-      .alongWith(
-        m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
-        .andThen(m_intakeSubsystem.setHandoff().repeatedly()
-        .alongWith(m_shooterSubsystem.setFireLow().repeatedly()))
-      ).withTimeout(3).andThen(
-        m_shooterSubsystem.setDisabled()
-        .alongWith(m_intakeSubsystem.setPrepHandoff())
+    // NamedCommands.registerCommand("straightShoot", 
+    //   m_driveSubsystem.confirmShootingPosition().repeatedly()
+    //   .alongWith(
+    //     m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
+    //     .andThen(m_intakeSubsystem.setHandoff().repeatedly()
+    //     .alongWith(m_shooterSubsystem.setFireLow().repeatedly()))
+    //   ).withTimeout(3).andThen(
+    //     m_shooterSubsystem.setDisabled()
+    //     .alongWith(m_intakeSubsystem.setPrepHandoff())
+    //   )
+    // );
+    NamedCommands.registerCommand("straightShoot",
+     new ParallelCommandGroup(
+      m_driveSubsystem.confirmShootingPosition(),
+      new SequentialCommandGroup(
+        m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal()),
+        new ParallelCommandGroup(
+          m_intakeSubsystem.setHandoff().repeatedly(),
+          m_shooterSubsystem.setFireLow().repeatedly()
+        ).withTimeout(2.5),
+        new ParallelCommandGroup(
+          m_shooterSubsystem.setDisabled(),
+          m_intakeSubsystem.setPrepHandoff()
+        ).withTimeout(0.5)
       )
+     )
     );
     //satisfies differential drive motor watchdog DDMW for when the bot is doing nothing
     NamedCommands.registerCommand("satisfyDDMW", 

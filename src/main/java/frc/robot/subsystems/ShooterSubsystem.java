@@ -83,11 +83,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command setFireHigh(){
-    return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedHigh_MPS).withName("fireHigh");
+    return runOnce(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedHigh_MPS).withName("fireHigh");
   }
 
   public Command setFireLow(){
-    return run(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedLow_MPS).withName("fireLow");
+    return runOnce(() -> speedSetpoint_MPS = ShooterSubsystemConstants.kGoalSpeedLow_MPS).withName("fireLow");
   }
 
   public Command setHandoffAllowance(){
@@ -98,7 +98,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command setDisabled(){
-    return run(() -> speedSetpoint_MPS = 0).withName("diabled");
+    return runOnce(() -> speedSetpoint_MPS = 0).withName("diabled");
   }
 
   public Command tempSetShooterSpeed(BooleanSupplier highSpeedEnabled, BooleanSupplier lowSpeedEnabled){
