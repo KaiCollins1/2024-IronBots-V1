@@ -137,9 +137,9 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   public void periodic() {
     // This method will be called once per scheduler run
     drivePose = driveOdometry.update(gyro.getRotation2d(), getAvgLeftPosition(), getAvgRightPosition());
-    fieldPose.setRobotPose(drivePose);
+    //fieldPose.setRobotPose(drivePose);
     SmartDashboard.putNumber("driveAngle", drivePose.getRotation().getDegrees());
-    SmartDashboard.putData("FieldPosition", fieldPose);
+    //SmartDashboard.putData("FieldPosition", fieldPose);
   }
 
   public Command teleopDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier){
