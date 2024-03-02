@@ -32,7 +32,7 @@ public final class Constants {
     public static final double kConfirmShootDriveLength_SEC = 1.5;
     public static final double kMaxDriveVelocity_MPS = 0;
     public static final double kMaxDriveRotations_RADPS = kMaxDriveVelocity_MPS * 2 * Math.PI;
-    public static final int kMotorCurrentLimit_AMP = 70;
+    public static final int kMotorCurrentLimit_AMP = 58;
     
 
     //feedforward constants

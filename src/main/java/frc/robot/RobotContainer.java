@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.GeneralConstants;
@@ -37,18 +39,34 @@ public class RobotContainer {
       .andThen(m_shooterSubsystem.setHandoffAllowance())
     );
     //scores the note
-    NamedCommands.registerCommand("straightShoot", 
-      m_driveSubsystem.confirmShootingPosition().repeatedly()
-      .alongWith(
-        m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
-        .andThen(m_intakeSubsystem.setHandoff().repeatedly()
-        .alongWith(m_shooterSubsystem.setFireLow().repeatedly()))
-      ).withTimeout(2).andThen(
-        m_shooterSubsystem.setDisabled()
-        .alongWith(m_intakeSubsystem.setPrepHandoff())
-      ).withTimeout(1)
+    // NamedCommands.registerCommand("straightShoot", 
+    //   m_driveSubsystem.confirmShootingPosition().repeatedly()
+    //   .alongWith(
+    //     m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
+    //     .andThen(m_intakeSubsystem.setHandoff().repeatedly()
+    //     .alongWith(m_shooterSubsystem.setFireLow().repeatedly()))
+    //   ).withTimeout(3).andThen(
+    //     m_shooterSubsystem.setDisabled()
+    //     .alongWith(m_intakeSubsystem.setPrepHandoff())
+    //   )
+    // );
+    NamedCommands.registerCommand("straightShoot",
+     new ParallelCommandGroup(
+      m_driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
+      new SequentialCommandGroup(
+        m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal()),
+        new ParallelCommandGroup(
+          m_intakeSubsystem.setHandoff().repeatedly(),
+          m_shooterSubsystem.setFireLow().repeatedly()
+        ).withTimeout(2.5),
+        new ParallelCommandGroup(
+          m_shooterSubsystem.setDisabled(),
+          m_intakeSubsystem.setPrepHandoff()
+        ).withTimeout(0.5)
+      )
+     )
     );
-    //satisfies differential drive motor watchdog DDMW for when Brittany is doing nothing
+    //satisfies differential drive motor watchdog DDMW for when the bot is doing nothing
     NamedCommands.registerCommand("satisfyDDMW", 
       m_driveSubsystem.doNothing().repeatedly()
     );
@@ -111,10 +129,10 @@ public class RobotContainer {
 
 
     // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
-    // m_driverController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    // m_driverController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    // m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    // m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_driverController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     
     // m_driverController.a().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // m_driverController.b().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

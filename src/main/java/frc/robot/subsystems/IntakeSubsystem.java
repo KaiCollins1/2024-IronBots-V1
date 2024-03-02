@@ -107,29 +107,29 @@ public class IntakeSubsystem extends SubsystemBase {
 
 
   public Command setPrepHandoff(){
-    return run(() -> {
+    return runOnce(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
       rollerSetpoint_MPS = 0;
     }).withName("prep4Handoff"); 
   }
 
   public Command setHandoff(){
-    return run(() -> {
+    return runOnce(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
     }).andThen(new WaitCommand(IntakeSubsystemConstants.kHandoffTime_SEC))
-    .withName("handing off"); 
+    .withName("handoff"); 
   }
   
   public Command setIdling(){
-    return run(() -> {
+    return runOnce(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
       rollerSetpoint_MPS = 0;
     }).withName("idling"); 
   }
 
   public Command setIntake(){
-    return run(() -> {
+    return runOnce(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
     }).unless(hasNote).repeatedly().withName("intaking");
