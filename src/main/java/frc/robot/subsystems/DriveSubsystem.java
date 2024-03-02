@@ -222,9 +222,9 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   }
 
   public Command confirmShootingPosition(){
-    return run(() -> 
+    return runOnce(() -> 
       drive.arcadeDrive(DriveSubsystemConstants.kConfirmShootDriveSpeed_PCT, 0)
-    ).repeatedly().withTimeout(DriveSubsystemConstants.kConfirmShootDriveLength_SEC);
+    );
   }
 
   private void setPose2d(Pose2d newPose) {
