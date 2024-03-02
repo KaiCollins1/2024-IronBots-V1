@@ -51,7 +51,7 @@ public class IntakeSubsystem extends SubsystemBase {
       IntakeSubsystemConstants.kRA
     );
 
-  private double intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
+  private double intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
   private double rollerSetpoint_MPS = 0;
 
   private DigitalInput rightLimitSwitch;
