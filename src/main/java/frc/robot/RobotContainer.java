@@ -48,7 +48,7 @@ public class RobotContainer {
         .alongWith(m_intakeSubsystem.setPrepHandoff())
       )
     );
-    //satisfies differential drive motor watchdog DDMW for when Brittany is doing nothing
+    //satisfies differential drive motor watchdog DDMW for when the bot is doing nothing
     NamedCommands.registerCommand("satisfyDDMW", 
       m_driveSubsystem.doNothing().repeatedly()
     );

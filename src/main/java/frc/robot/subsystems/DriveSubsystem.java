@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -51,6 +52,8 @@ private CANSparkMax rightLeaderMotor = new CANSparkMax(DriveSubsystemConstants.k
 private CANSparkMax rightFollowerMotor = new CANSparkMax(DriveSubsystemConstants.kRightBackMotorID, MotorType.kBrushless);
 
 private DifferentialDrive drive;
+
+private SlewRateLimiter driveLimiter;
 
 private PIDController leftDrivePID = new PIDController(
   DriveSubsystemConstants.kP, 
@@ -103,6 +106,8 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   public DriveSubsystem(){
     motorConfig();
 
+    //max output divided by time to accelerate = dO/s, acceleration
+    driveLimiter = new SlewRateLimiter((1/0.75));
 
     zeroEncoders(false);
     zeroGyro(false);
@@ -156,7 +161,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       ).withName("arcadeDriveSmart"):
       run(
         () -> drive.arcadeDrive(
-          fwdSupplier.getAsDouble(), 
+          driveLimiter.calculate(fwdSupplier.getAsDouble()), 
           0.7 * rotSupplier.getAsDouble(), 
           true
         )
