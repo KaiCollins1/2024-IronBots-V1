@@ -107,7 +107,8 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     motorConfig();
 
     //max output divided by time to accelerate = dO/s, acceleration
-    driveLimiter = new SlewRateLimiter((1/0.75));
+    // driveLimiter = new SlewRateLimiter((1/0.5));
+    driveLimiter = new SlewRateLimiter((1/0.5));
 
     zeroEncoders(false);
     zeroGyro(false);
@@ -145,6 +146,8 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     fieldPose.setRobotPose(drivePose);
     SmartDashboard.putNumber("driveAngle", drivePose.getRotation().getDegrees());
     SmartDashboard.putData("FieldPosition", fieldPose);
+    SmartDashboard.putNumber("LeftSpeed", getAvgLeftVelocity());
+    SmartDashboard.putNumber("RightSpeed", getAvgRightVelocity());
   }
 
   public Command teleopDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier){
@@ -209,8 +212,8 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   // }
 
   public void rawChassisSpeedDrive(ChassisSpeeds speed) {
-    double leftSpeed = driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond;
-    double rightSpeed = driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond;
+    double leftSpeed = -driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond;
+    double rightSpeed = -driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond;
     leftLeaderMotor.setVoltage(
       driveFeedforward.calculate(leftSpeed)+
       leftDrivePID.calculate(getAvgLeftVelocity(), leftSpeed)

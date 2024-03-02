@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.GeneralConstants;
@@ -33,10 +34,27 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
-    //collects the note!
+    // //collects the note!
+    // NamedCommands.registerCommand("intakeCollect", 
+    //   m_intakeSubsystem.setIntake().repeatedly().withTimeout(2)
+    //   .andThen(m_shooterSubsystem.setHandoffAllowance())
+    // );
     NamedCommands.registerCommand("intakeCollect", 
-      m_intakeSubsystem.setIntake().repeatedly().withTimeout(2)
-      .andThen(m_shooterSubsystem.setHandoffAllowance())
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          m_intakeSubsystem.setPrepHandoff(),
+          m_shooterSubsystem.setDisabled()
+        ),
+        new SequentialCommandGroup(
+          m_intakeSubsystem.setIntake().repeatedly().withTimeout(2),
+          m_shooterSubsystem.setHandoffAllowance()
+        ).withTimeout(2.5),
+        new ParallelCommandGroup(
+          m_intakeSubsystem.setPrepHandoff(),
+          m_shooterSubsystem.setDisabled()
+        ),
+        new WaitCommand(0.25)
+      )
     );
     //scores the note
     // NamedCommands.registerCommand("straightShoot", 
