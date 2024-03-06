@@ -19,7 +19,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /** Add your docs here. */
-public class MultiSystemCommands {
+public class SubsystemContainer {
 
     private ClimberSubsystem m_climberSubsystem;
     private DriveSubsystem m_driveSubsystem;
@@ -27,7 +27,7 @@ public class MultiSystemCommands {
     private LEDSubsystem m_ledSubsystem;
     private ShooterSubsystem m_shooterSubsystem;
 
-    public MultiSystemCommands(){
+    public SubsystemContainer(){
         m_climberSubsystem = new ClimberSubsystem();
         m_driveSubsystem = new DriveSubsystem();
         m_intakeSubsystem = new IntakeSubsystem();

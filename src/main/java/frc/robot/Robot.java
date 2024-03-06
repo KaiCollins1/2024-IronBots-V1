@@ -6,11 +6,18 @@ package frc.robot;
 
 import org.littletonrobotics.urcl.URCL;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.GeneralConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -19,20 +26,40 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+  
+  private final SubsystemContainer systemContainer = new SubsystemContainer();
+  private final CommandXboxController m_driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
+  private  SendableChooser<Command> autoChooser;
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
-
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
+  // This function is run when the robot is first started up and should be used for any initialization code.
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
     CameraServer.startAutomaticCapture();
-    m_robotContainer = new RobotContainer();
+    
+    m_driverController.rightBumper().whileTrue(systemContainer.t_intakeNote).onFalse(systemContainer.t_handoffNote);
+    m_driverController.leftBumper().whileTrue(systemContainer.t_shootNote);
+    m_driverController.x().whileTrue(systemContainer.t_removeNote);
+
+    systemContainer.d_setDefaultCommands(m_driverController);
+
+    systemContainer.s_bindSysIDCommands(m_driverController);
+
+    NamedCommands.registerCommand("intakeCollect", systemContainer.a_intakeCollect);
+    NamedCommands.registerCommand("straightShoot", systemContainer.a_shootStraight);
+    NamedCommands.registerCommand("TempGetNoteDrive", systemContainer.a_tempGetNoteDrive);
+    NamedCommands.registerCommand("TempReturnNoteDrive", systemContainer.a_tempReturnNoteDrive);
+    NamedCommands.registerCommand("satisfyDDMW", systemContainer.a_satisfyDDMW);
+
+    //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
+    //To FTP to the roboRIO, open a Windows Explorer window. In the address bar, 
+    //type ftp://roboRIO-4983-frc.local and press enter. You can now browse the 
+    //roboRIO file system just like you would browse files on your computer.
+    //https://docs.wpilib.org/en/stable/docs/software/roborio-info/roborio-ftp.html#ftp
+    
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     //start data logging using log stuff and also Unofficial Rev Log Manager
     DataLogManager.start();
     URCL.start();
@@ -53,7 +80,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    m_robotContainer.updateSchedulerTelemetry();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -63,11 +89,9 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    m_autonomousCommand = autoChooser.getSelected();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
