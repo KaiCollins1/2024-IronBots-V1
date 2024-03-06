@@ -28,22 +28,22 @@ import frc.robot.Constants.GeneralConstants;
 public class Robot extends TimedRobot {
   
   private final SubsystemContainer systemContainer = new SubsystemContainer();
-  private final CommandXboxController m_driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
+  private final CommandXboxController driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
   private  SendableChooser<Command> autoChooser;
-  private Command m_autonomousCommand;
+  private Command autonomousCommand;
 
   // This function is run when the robot is first started up and should be used for any initialization code.
   @Override
   public void robotInit() {
     CameraServer.startAutomaticCapture();
     
-    m_driverController.rightBumper().whileTrue(systemContainer.t_intakeNote).onFalse(systemContainer.t_handoffNote);
-    m_driverController.leftBumper().whileTrue(systemContainer.t_shootNote);
-    m_driverController.x().whileTrue(systemContainer.t_removeNote);
+    driverController.rightBumper().whileTrue(systemContainer.t_intakeNote).onFalse(systemContainer.t_handoffNote);
+    driverController.leftBumper().whileTrue(systemContainer.t_shootNote);
+    driverController.x().whileTrue(systemContainer.t_removeNote);
 
-    systemContainer.d_setDefaultCommands(m_driverController);
+    systemContainer.d_setDefaultCommands(driverController);
 
-    systemContainer.s_bindSysIDCommands(m_driverController);
+    systemContainer.s_bindSysIDCommands(driverController);
 
     NamedCommands.registerCommand("intakeCollect", systemContainer.a_intakeCollect);
     NamedCommands.registerCommand("straightShoot", systemContainer.a_shootStraight);
@@ -91,10 +91,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = autoChooser.getSelected();
+    autonomousCommand = autoChooser.getSelected();
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
     }
   }
 
@@ -108,8 +108,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
     }
   }
 

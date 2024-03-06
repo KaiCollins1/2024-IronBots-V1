@@ -21,120 +21,120 @@ import frc.robot.subsystems.ShooterSubsystem;
 /** Add your docs here. */
 public class SubsystemContainer {
 
-    private ClimberSubsystem m_climberSubsystem;
-    private DriveSubsystem m_driveSubsystem;
-    private IntakeSubsystem m_intakeSubsystem;
-    private LEDSubsystem m_ledSubsystem;
-    private ShooterSubsystem m_shooterSubsystem;
+    private ClimberSubsystem climberSubsystem;
+    private DriveSubsystem driveSubsystem;
+    private IntakeSubsystem intakeSubsystem;
+    private LEDSubsystem ledSubsystem;
+    private ShooterSubsystem shooterSubsystem;
 
     public SubsystemContainer(){
-        m_climberSubsystem = new ClimberSubsystem();
-        m_driveSubsystem = new DriveSubsystem();
-        m_intakeSubsystem = new IntakeSubsystem();
-        m_ledSubsystem = new LEDSubsystem();
-        m_shooterSubsystem = new ShooterSubsystem();
+        climberSubsystem = new ClimberSubsystem();
+        driveSubsystem = new DriveSubsystem();
+        intakeSubsystem = new IntakeSubsystem();
+        ledSubsystem = new LEDSubsystem();
+        shooterSubsystem = new ShooterSubsystem();
     }
 
     //TELOP Commands, t_
-    public final Command t_intakeNote = m_intakeSubsystem.setIntake();
+    public final Command t_intakeNote = intakeSubsystem.setIntake();
     public final Command t_handoffNote = 
     new ParallelCommandGroup(
-        m_intakeSubsystem.setPrepHandoff(),
-        m_shooterSubsystem.setHandoffAllowance()
+        intakeSubsystem.setPrepHandoff(),
+        shooterSubsystem.setHandoffAllowance()
     );
 
     public final Command t_shootNote =
     new ParallelCommandGroup(
-        m_driveSubsystem.confirmShootingPosition().repeatedly(),
-        m_shooterSubsystem.setFireLow().repeatedly(),
+        driveSubsystem.confirmShootingPosition().repeatedly(),
+        shooterSubsystem.setFireLow().repeatedly(),
         new SequentialCommandGroup(
-            new WaitCommand(4).until(m_shooterSubsystem.velocityAboveLowGoal()),
-            m_intakeSubsystem.setHandoff().repeatedly()
+            new WaitCommand(4).until(shooterSubsystem.velocityAboveLowGoal()),
+            intakeSubsystem.setHandoff().repeatedly()
         )
     );
 
     public final Command t_removeNote =
     new SequentialCommandGroup(
-        m_intakeSubsystem.setIdling().repeatedly().withTimeout(0.2),
-        m_intakeSubsystem.removeNote().repeatedly()
+        intakeSubsystem.setIdling().repeatedly().withTimeout(0.2),
+        intakeSubsystem.removeNote().repeatedly()
     );
 
 
     //AUTON Commands, a_
     public final Command a_shootStraight = 
     new ParallelRaceGroup(
-      m_driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
+      driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
       new SequentialCommandGroup(
-        m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal()),
+        shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()),
         new ParallelCommandGroup(
-          m_intakeSubsystem.setHandoff().repeatedly(),
-          m_shooterSubsystem.setFireLow().repeatedly()
+          intakeSubsystem.setHandoff().repeatedly(),
+          shooterSubsystem.setFireLow().repeatedly()
         ).withTimeout(2.5),
         new ParallelCommandGroup(
-          m_shooterSubsystem.setDisabled(),
-          m_intakeSubsystem.setPrepHandoff()
+          shooterSubsystem.setDisabled(),
+          intakeSubsystem.setPrepHandoff()
         )
       )
      );
 
     public final Command a_satisfyDDMW =
-        m_driveSubsystem.doNothing().repeatedly();
+        driveSubsystem.doNothing().repeatedly();
     
     public final Command a_intakeCollect =
     new SequentialCommandGroup(
         new ParallelCommandGroup(
-          m_intakeSubsystem.setPrepHandoff(),
-          m_shooterSubsystem.setDisabled()
+          intakeSubsystem.setPrepHandoff(),
+          shooterSubsystem.setDisabled()
         ),
         new SequentialCommandGroup(
-          m_intakeSubsystem.setIntake().repeatedly().withTimeout(2),
-          m_shooterSubsystem.setHandoffAllowance()
+          intakeSubsystem.setIntake().repeatedly().withTimeout(2),
+          shooterSubsystem.setHandoffAllowance()
         ).withTimeout(2.5),
         new ParallelCommandGroup(
-          m_intakeSubsystem.setPrepHandoff(),
-          m_shooterSubsystem.setDisabled()
+          intakeSubsystem.setPrepHandoff(),
+          shooterSubsystem.setDisabled()
         ),
         new WaitCommand(0.15)
       );
 
     public final Command a_tempGetNoteDrive = 
-        m_driveSubsystem.goDirectionTimeout(2,0.45,false);
+        driveSubsystem.goDirectionTimeout(2,0.45,false);
     
     public final Command a_tempReturnNoteDrive =
-        m_driveSubsystem.goDirectionTimeout(2,0.5,true);
+        driveSubsystem.goDirectionTimeout(2,0.5,true);
 
 
 
     //DEFAULT Commands, d_
     public final void d_setDefaultCommands(CommandXboxController driverController){
         CommandScheduler.getInstance().setDefaultCommand(
-            m_driveSubsystem,
-            m_driveSubsystem.teleopDriveCommand(
+            driveSubsystem,
+            driveSubsystem.teleopDriveCommand(
                 () -> driverController.getLeftY(),
                 () -> driverController.getRightX()
             )
         );
-        CommandScheduler.getInstance().setDefaultCommand(m_shooterSubsystem, m_shooterSubsystem.setDisabled());
-        CommandScheduler.getInstance().setDefaultCommand(m_intakeSubsystem, m_intakeSubsystem.setPrepHandoff());
+        CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, shooterSubsystem.setDisabled());
+        CommandScheduler.getInstance().setDefaultCommand(intakeSubsystem, intakeSubsystem.setPrepHandoff());
     }
 
     //SYSID Commands, s_
     public void s_bindSysIDCommands(CommandXboxController sysIDController){
         // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
-        sysIDController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        sysIDController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        sysIDController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        sysIDController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        sysIDController.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        sysIDController.b().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        sysIDController.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        sysIDController.y().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         
-        // sysIDController.a().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // sysIDController.b().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // sysIDController.x().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // sysIDController.y().whileTrue(m_shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.a().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // sysIDController.b().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.x().whileTrue(shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // sysIDController.y().whileTrue(shooterSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        // sysIDController.a().whileTrue(m_intakeSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // sysIDController.b().whileTrue(m_intakeSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // sysIDController.x().whileTrue(m_intakeSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // sysIDController.y().whileTrue(m_intakeSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.a().whileTrue(intakeSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // sysIDController.b().whileTrue(intakeSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.x().whileTrue(intakeSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // sysIDController.y().whileTrue(intakeSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     }
 
 }

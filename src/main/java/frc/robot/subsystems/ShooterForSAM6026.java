@@ -110,18 +110,18 @@ public class ShooterForSAM6026 extends SubsystemBase {
 
   //schedule these commands something like this inside of RobotContainer
   /*
-    CommandXboxController m_driverController = new CommandXboxController(kWhateverYourPortIs);
+    CommandXboxController driverController = new CommandXboxController(kWhateverYourPortIs);
 
-    m_driverController.a().onTrue(m_shooterSubsystem.testingCommandIncreaseByDegrees(5);
+    driverController.a().onTrue(shooterSubsystem.testingCommandIncreaseByDegrees(5);
     
-    m_driverController.b().whileTrue(m_shooterSubsystem.goToXYZAngleCommand(5);
+    driverController.b().whileTrue(shooterSubsystem.goToXYZAngleCommand(5);
    */
 
   //you can also make a default command that will run when no other command is being ran with the subsystem
   /*
     CommandScheduler.getInstance().setDefaultCommand(
-      m_shooterSubsystem,
-      m_shooterSubsystem.whateverDefaultCommand()
+      shooterSubsystem,
+      shooterSubsystem.whateverDefaultCommand()
     );
    */
 
