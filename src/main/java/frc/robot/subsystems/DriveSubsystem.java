@@ -173,41 +173,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     return run(() -> drive.arcadeDrive(0, 0));
   }
 
-  // private Command smartArcadeDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
-  //   return run(
-  //     () -> rawChassisSpeedDrive(
-  //       new ChassisSpeeds(
-  //         DriveSubsystemConstants.kMaxDriveVelocity_Mps * fwdSupplier.getAsDouble(),
-  //         0, //vy is always zero because we use tank drive and it cannot move sideways
-  //         DriveSubsystemConstants.kMaxDriveRotations_Radps * rotSupplier.getAsDouble()
-  //       )
-  //     )
-  //   ).withName("smartArcadeDrive");
-  // }
-  //
-  // private Command dumbArcadeDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
-  //   return run(
-  //     () -> drive.arcadeDrive(
-  //       fwdSupplier.getAsDouble(), 
-  //       rotSupplier.getAsDouble(), 
-  //       true
-  //     )
-  //   ).withName("dumbArcadeDrive");
-  // }
-
-  // private void smartArcadeDrive(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
-  //   this.chassisSpeedDrive(
-  //     new ChassisSpeeds(
-  //       DriveSubsystemConstants.kMaxDriveVelocity_Mps * fwdSupplier.getAsDouble(),
-  //       0, //vy is always zero because we use tank drive and it cannot move sideways
-  //       DriveSubsystemConstants.kMaxDriveRotations_Radps * rotSupplier.getAsDouble()
-  //     )
-  //   );
-  // }
-  // private void dumbArcadeDrive(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
-  //   drive.arcadeDrive(fwdSupplier.getAsDouble(), rotSupplier.getAsDouble());
-  // }
-
   public void rawChassisSpeedDrive(ChassisSpeeds speed) {
     double leftSpeed = driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond;
     double rightSpeed = driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond;
@@ -234,10 +199,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       newPose
     );
   }
-
-  // public Pose2d getPose2d() {
-  //   return drivePose;
-  // }
 
   //get average (avg) values of encoders
   private double getAvgLeftPosition() {
@@ -271,14 +232,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       (rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()) / 2
     );
   }
-
-  // private double getAvgPosition(){
-  //   return (
-  //     DriveSubsystemConstants.kUseQuadEncoders?
-  //     (rightQuadEncoder.getDistance() + leftQuadEncoder.getDistance())/2:
-  //     (rightLeaderHallSensor.getPosition() + rightFollowerHallSensor.getPosition()+ leftLeaderHallSensor.getPosition() + leftFollowerHallSensor.getPosition()) / 4
-  //   );
-  // }
 
   private double getAvgVelocity(){
     return (
