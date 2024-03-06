@@ -30,8 +30,8 @@ public final class Constants {
     public static final boolean kUseQuadEncoders = true;
     public static final double kConfirmShootDriveSpeed_PCT = 0.2;
     public static final double kConfirmShootDriveLength_SEC = 1.5;
-    public static final double kMaxDriveVelocity_MPS = 0;
-    public static final double kMaxDriveRotations_RADPS = kMaxDriveVelocity_MPS * 2 * Math.PI;
+    public static final double kMaxDriveVelocity_MPS = 4*(0.2);
+    public static final double kMaxDriveRotations_RADPS = 0.15;
     public static final int kMotorCurrentLimit_AMP = 58;
     
 
@@ -121,7 +121,7 @@ public final class Constants {
     public static final double kGoalHandoffSpeed_MPS = (5)*(60);
 
     public static final double kInsideBotPos_DEG = 280-1;
-    public static final double kIntakingPos_DEG = 56+4;
+    public static final double kIntakingPos_DEG = 56+6;
     public static final double kIdlePos_DEG = 200;
 
     //roller feedforward constants

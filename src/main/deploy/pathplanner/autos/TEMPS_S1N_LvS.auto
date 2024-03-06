@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.973104168430559,
+      "y": 4.4671669970120575
+    },
+    "rotation": -51.340191745909884
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "straightShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TempGetNoteDrive"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TempGetNoteDrive"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TempGetNoteDrive"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

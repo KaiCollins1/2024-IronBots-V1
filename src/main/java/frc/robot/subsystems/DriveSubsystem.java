@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.MecanumDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -81,6 +82,8 @@ private RelativeEncoder rightFollowerHallSensor;
 private Encoder leftQuadEncoder;
 private Encoder rightQuadEncoder;
 
+private PIDController tempLocationPID = new PIDController(0.5, 0, 0.00002);
+
 private AHRS gyro = new AHRS(SPI.Port.kMXP);
 
 private DifferentialDriveOdometry driveOdometry;
@@ -106,9 +109,11 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   public DriveSubsystem(){
     motorConfig();
 
+    // drive.arcadeDriveIK()
+
     //max output divided by time to accelerate = dO/s, acceleration
     // driveLimiter = new SlewRateLimiter((1/0.5));
-    driveLimiter = new SlewRateLimiter((1/0.5));
+    driveLimiter = new SlewRateLimiter((1/0.25));
 
     zeroEncoders(false);
     zeroGyro(false);
@@ -148,6 +153,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     SmartDashboard.putData("FieldPosition", fieldPose);
     SmartDashboard.putNumber("LeftSpeed", getAvgLeftVelocity());
     SmartDashboard.putNumber("RightSpeed", getAvgRightVelocity());
+    SmartDashboard.putNumber("rotSpeedRADPS", Units.DegreesPerSecond.of(gyro.getRate()).in(RadiansPerSecond));
   }
 
   public Command teleopDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier){
@@ -173,7 +179,12 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   }
 
   public Command doNothing(){
-    return run(() -> drive.arcadeDrive(0, 0));
+    return runOnce(() -> drive.arcadeDrive(0,0));
+  }
+
+  public Command goDirectionTimeout(double timeout, double speed, boolean isReversed){
+    return runOnce(() -> drive.arcadeDrive((isReversed?1:-1) * speed, 0))
+    .repeatedly().withTimeout(timeout);
   }
 
   // private Command smartArcadeDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier) {
@@ -229,6 +240,13 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       drive.arcadeDrive(DriveSubsystemConstants.kConfirmShootDriveSpeed_PCT, 0)
     );
   }
+
+  // private void voltageDumbArcadeDrive(double fwd, double rot, boolean squareInputs){
+  //   edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds nWheelSpeeds = drive.arcadeDriveIK(fwd, rot, squareInputs);
+  //   leftLeaderMotor.setVoltage(
+  //     12 * (nWheelSpeeds.)
+  //   );
+  // }
 
   private void setPose2d(Pose2d newPose) {
     driveOdometry.resetPosition(

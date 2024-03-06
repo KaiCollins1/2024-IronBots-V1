@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -91,13 +92,15 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     
-    movementMotor.setVoltage(movementPID.calculate(getAngle(), intakeSetpoint_DEG));
+    double temp = movementPID.calculate(getAngle(), intakeSetpoint_DEG);
+    movementMotor.setVoltage(temp);
     rollerMotor.setVoltage(
      rollerFeedforward.calculate(rollerSetpoint_MPS)+
      rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
     );
 
-    SmartDashboard.putNumber("Intake Angle", getAngle());
+    SmartDashboard.putNumber("Intake Angle", intakeSetpoint_DEG);
+    SmartDashboard.putNumber("tempWhatIntakeSays2222", temp);
     SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());
     SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
     SmartDashboard.putBoolean("middleLimit", !middleLimitSwitch.get());
@@ -133,6 +136,13 @@ public class IntakeSubsystem extends SubsystemBase {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
     }).unless(hasNote).repeatedly().withName("intaking");
+  }
+
+  public Command removeNote(){
+    return runOnce(() -> {
+      intakeSetpoint_DEG = (IntakeSubsystemConstants.kIntakingPos_DEG+IntakeSubsystemConstants.kIdlePos_DEG)/2;
+      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
+    }).withName("handoff"); 
   }
 
   // public Command autoCollectNote(){
@@ -171,6 +181,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   private void motorConfig(){
+
     rollerMotor = new CANSparkMax(IntakeSubsystemConstants.kRollerMotorID, MotorType.kBrushless);
     movementMotor = new CANSparkMax(IntakeSubsystemConstants.kMovementMotorID, MotorType.kBrushless);
 
@@ -179,6 +190,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     rollerMotor.setInverted(IntakeSubsystemConstants.kRollerMotorReversed);
     movementMotor.setInverted(IntakeSubsystemConstants.kMovementMotorReversed);
+
+    rollerMotor.setIdleMode(IdleMode.kCoast);
+    movementMotor.setIdleMode(IdleMode.kCoast);
     
     rollerHallSensor = rollerMotor.getEncoder();
     rollerHallSensor.setPositionConversionFactor(IntakeSubsystemConstants.kRollerHallSensorPositionConversionFactor);

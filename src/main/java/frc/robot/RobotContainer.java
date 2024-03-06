@@ -84,6 +84,32 @@ public class RobotContainer {
       )
      )
     );
+
+    NamedCommands.registerCommand("TempGetNoteDrive", 
+      m_driveSubsystem.goDirectionTimeout(2,0.45,false)
+    );
+    NamedCommands.registerCommand("TempReturnNoteDrive", 
+      m_driveSubsystem.goDirectionTimeout(2,0.5,true)
+    );
+
+    // new ParallelCommandGroup(
+    //   m_driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
+    //   new SequentialCommandGroup(
+    //     new ParallelCommandGroup(
+    //       m_intakeSubsystem.setPrepHandoff(),
+    //       m_shooterSubsystem.setDisabled()
+    //     ),
+    //     new SequentialCommandGroup(
+    //       m_intakeSubsystem.setIntake().repeatedly().withTimeout(2),
+    //       m_shooterSubsystem.setHandoffAllowance()
+    //     ).withTimeout(2.5),
+    //     new ParallelCommandGroup(
+    //       m_intakeSubsystem.setPrepHandoff(),
+    //       m_shooterSubsystem.setDisabled()
+    //     ),
+    //     new WaitCommand(0.25)
+    //   )
+    //  );
     //satisfies differential drive motor watchdog DDMW for when the bot is doing nothing
     NamedCommands.registerCommand("satisfyDDMW", 
       m_driveSubsystem.doNothing().repeatedly()
@@ -140,17 +166,22 @@ public class RobotContainer {
       )
     );
 
+    m_driverController.x().whileTrue(
+      m_intakeSubsystem.setIdling().repeatedly().withTimeout(0.2)
+      .andThen(m_intakeSubsystem.removeNote().repeatedly())
+    );
+
 
     // m_driverController.a().onTrue(m_intakeSubsystem.setIntake());
     // m_driverController.b().onTrue(m_intakeSubsystem.setIdling());
     // m_driverController.x().onTrue(m_intakeSubsystem.prepHandoff());
 
 
-    // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
-    m_driverController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    m_driverController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
+    // m_driverController.a().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // m_driverController.b().whileTrue(m_driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // m_driverController.x().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // m_driverController.y().whileTrue(m_driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     
     // m_driverController.a().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     // m_driverController.b().whileTrue(m_shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
