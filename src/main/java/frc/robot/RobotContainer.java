@@ -24,9 +24,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
-  private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-  private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
-  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   private final MultiSystemCommands systemCommands = new MultiSystemCommands();
 
   private final CommandXboxController m_driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
@@ -34,75 +31,15 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+
     configureBindings();
+    systemCommands.d_setDefaultCommands(m_driverController);
 
-    // //collects the note!
-    // NamedCommands.registerCommand("intakeCollect", 
-    //   m_intakeSubsystem.setIntake().repeatedly().withTimeout(2)
-    //   .andThen(m_shooterSubsystem.setHandoffAllowance())
-    // );
-    NamedCommands.registerCommand("intakeCollect", 
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          m_intakeSubsystem.setPrepHandoff(),
-          m_shooterSubsystem.setDisabled()
-        ),
-        new SequentialCommandGroup(
-          m_intakeSubsystem.setIntake().repeatedly().withTimeout(2),
-          m_shooterSubsystem.setHandoffAllowance()
-        ).withTimeout(2.5),
-        new ParallelCommandGroup(
-          m_intakeSubsystem.setPrepHandoff(),
-          m_shooterSubsystem.setDisabled()
-        ),
-        new WaitCommand(0.25)
-      )
-    );
-    //scores the note
-    // NamedCommands.registerCommand("straightShoot", 
-    //   m_driveSubsystem.confirmShootingPosition().repeatedly()
-    //   .alongWith(
-    //     m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
-    //     .andThen(m_intakeSubsystem.setHandoff().repeatedly()
-    //     .alongWith(m_shooterSubsystem.setFireLow().repeatedly()))
-    //   ).withTimeout(3).andThen(
-    //     m_shooterSubsystem.setDisabled()
-    //     .alongWith(m_intakeSubsystem.setPrepHandoff())
-    //   )
-    // );
+    NamedCommands.registerCommand("intakeCollect", systemCommands.a_intakeCollect);
     NamedCommands.registerCommand("straightShoot", systemCommands.a_shootStraight);
-
-    NamedCommands.registerCommand("TempGetNoteDrive", 
-      m_driveSubsystem.goDirectionTimeout(2,0.45,false)
-    );
-    NamedCommands.registerCommand("TempReturnNoteDrive", 
-      m_driveSubsystem.goDirectionTimeout(2,0.5,true)
-    );
-
-    // new ParallelCommandGroup(
-    //   m_driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
-    //   new SequentialCommandGroup(
-    //     new ParallelCommandGroup(
-    //       m_intakeSubsystem.setPrepHandoff(),
-    //       m_shooterSubsystem.setDisabled()
-    //     ),
-    //     new SequentialCommandGroup(
-    //       m_intakeSubsystem.setIntake().repeatedly().withTimeout(2),
-    //       m_shooterSubsystem.setHandoffAllowance()
-    //     ).withTimeout(2.5),
-    //     new ParallelCommandGroup(
-    //       m_intakeSubsystem.setPrepHandoff(),
-    //       m_shooterSubsystem.setDisabled()
-    //     ),
-    //     new WaitCommand(0.25)
-    //   )
-    //  );
-    //satisfies differential drive motor watchdog DDMW for when the bot is doing nothing
-    NamedCommands.registerCommand("satisfyDDMW", 
-      m_driveSubsystem.doNothing().repeatedly()
-    );
-
-    
+    NamedCommands.registerCommand("TempGetNoteDrive", systemCommands.a_tempGetNoteDrive);
+    NamedCommands.registerCommand("TempReturnNoteDrive", systemCommands.a_tempReturnNoteDrive);
+    NamedCommands.registerCommand("satisfyDDMW", systemCommands.a_satisfyDDMW);
 
     //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
     //To FTP to the roboRIO, open a Windows Explorer window. In the address bar, 
@@ -112,56 +49,15 @@ public class RobotContainer {
     
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
   }
 
 
   private void configureBindings() {
- 
-    CommandScheduler.getInstance().setDefaultCommand(
-      m_driveSubsystem,
-      m_driveSubsystem.teleopDriveCommand(
-        () -> m_driverController.getLeftY(),
-        () -> m_driverController.getRightX()
-      )
-    );
 
-    CommandScheduler.getInstance().setDefaultCommand(
-      m_shooterSubsystem, 
-      m_shooterSubsystem.setDisabled()
-    );
-
-    CommandScheduler.getInstance().setDefaultCommand(
-      m_intakeSubsystem,
-      m_intakeSubsystem.setPrepHandoff()
-    );
-
-    m_driverController.rightBumper().whileTrue(
-      m_intakeSubsystem.setIntake()
-    ).onFalse(
-      m_shooterSubsystem.setHandoffAllowance()
-    );
-
-    m_driverController.leftBumper().whileTrue(
-      m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
-      .deadlineWith(
-        m_driveSubsystem.confirmShootingPosition().repeatedly()
-      )
-      .andThen(
-        m_intakeSubsystem.setHandoff().repeatedly()
-        .alongWith(m_shooterSubsystem.setFireLow().repeatedly())
-        .alongWith(m_driveSubsystem.confirmShootingPosition().repeatedly())
-      )
-    );
-
-    m_driverController.x().whileTrue(
-      m_intakeSubsystem.setIdling().repeatedly().withTimeout(0.2)
-      .andThen(m_intakeSubsystem.removeNote().repeatedly())
-    );
-
-
-    // m_driverController.a().onTrue(m_intakeSubsystem.setIntake());
-    // m_driverController.b().onTrue(m_intakeSubsystem.setIdling());
-    // m_driverController.x().onTrue(m_intakeSubsystem.prepHandoff());
+    m_driverController.rightBumper().whileTrue(systemCommands.t_intakeNote).onFalse(systemCommands.t_handoffNote);
+    m_driverController.leftBumper().whileTrue(systemCommands.t_shootNote);
+    m_driverController.x().whileTrue(systemCommands.t_removeNote);
 
     systemCommands.s_bindSysIDCommands(m_driverController);
 
@@ -170,25 +66,9 @@ public class RobotContainer {
   //@return the command to run in autonomous
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
-    // return null;
-    // return m_driveSubsystem.doNothing().withTimeout(0.5).andThen(
-    // m_shooterSubsystem.setFireLow().repeatedly().until(m_shooterSubsystem.velocityAboveLowGoal())
-    //   .deadlineWith(
-    //     m_driveSubsystem.confirmShootingPosition().repeatedly()
-    //   )
-    //   .andThen(
-    //     m_intakeSubsystem.setHandoff().repeatedly()
-    //     .alongWith(m_shooterSubsystem.setFireLow().repeatedly())
-    //     .alongWith(m_driveSubsystem.confirmShootingPosition().repeatedly()).withTimeout(2)
-    //   )
-    //   .andThen(m_driveSubsystem.teleopDriveCommand(() -> -0.5, () -> 0).repeatedly().withTimeout(2)));
   }
 
   public void updateSchedulerTelemetry() {
-    SmartDashboard.putData(m_driveSubsystem);
-    SmartDashboard.putData(m_shooterSubsystem);
-    SmartDashboard.putData(m_intakeSubsystem);
-    SmartDashboard.putNumber("avgShooterSpeed", m_shooterSubsystem.getAvgSpeed());
   }
 
 }
