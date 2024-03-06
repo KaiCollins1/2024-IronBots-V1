@@ -1,0 +1,87 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 2,
+      "y": 2
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "straightShoot"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "intakeCollect"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "TempGetNoteDrive"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "satisfyDDMW"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TempReturnNoteDrive"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "straightShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TempGetNoteDrive"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TempGetNoteDrive"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "satisfyDDMW"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

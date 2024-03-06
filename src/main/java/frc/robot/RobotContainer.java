@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.GeneralConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -35,10 +36,27 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
-    //collects the note!
+    // //collects the note!
+    // NamedCommands.registerCommand("intakeCollect", 
+    //   m_intakeSubsystem.setIntake().repeatedly().withTimeout(2)
+    //   .andThen(m_shooterSubsystem.setHandoffAllowance())
+    // );
     NamedCommands.registerCommand("intakeCollect", 
-      m_intakeSubsystem.setIntake().repeatedly().withTimeout(2)
-      .andThen(m_shooterSubsystem.setHandoffAllowance())
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          m_intakeSubsystem.setPrepHandoff(),
+          m_shooterSubsystem.setDisabled()
+        ),
+        new SequentialCommandGroup(
+          m_intakeSubsystem.setIntake().repeatedly().withTimeout(2),
+          m_shooterSubsystem.setHandoffAllowance()
+        ).withTimeout(2.5),
+        new ParallelCommandGroup(
+          m_intakeSubsystem.setPrepHandoff(),
+          m_shooterSubsystem.setDisabled()
+        ),
+        new WaitCommand(0.25)
+      )
     );
     //scores the note
     // NamedCommands.registerCommand("straightShoot", 
@@ -53,6 +71,32 @@ public class RobotContainer {
     //   )
     // );
     NamedCommands.registerCommand("straightShoot", systemCommands.a_shootStraight);
+
+    NamedCommands.registerCommand("TempGetNoteDrive", 
+      m_driveSubsystem.goDirectionTimeout(2,0.45,false)
+    );
+    NamedCommands.registerCommand("TempReturnNoteDrive", 
+      m_driveSubsystem.goDirectionTimeout(2,0.5,true)
+    );
+
+    // new ParallelCommandGroup(
+    //   m_driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
+    //   new SequentialCommandGroup(
+    //     new ParallelCommandGroup(
+    //       m_intakeSubsystem.setPrepHandoff(),
+    //       m_shooterSubsystem.setDisabled()
+    //     ),
+    //     new SequentialCommandGroup(
+    //       m_intakeSubsystem.setIntake().repeatedly().withTimeout(2),
+    //       m_shooterSubsystem.setHandoffAllowance()
+    //     ).withTimeout(2.5),
+    //     new ParallelCommandGroup(
+    //       m_intakeSubsystem.setPrepHandoff(),
+    //       m_shooterSubsystem.setDisabled()
+    //     ),
+    //     new WaitCommand(0.25)
+    //   )
+    //  );
     //satisfies differential drive motor watchdog DDMW for when the bot is doing nothing
     NamedCommands.registerCommand("satisfyDDMW", 
       m_driveSubsystem.doNothing().repeatedly()
@@ -107,6 +151,11 @@ public class RobotContainer {
         .alongWith(m_shooterSubsystem.setFireLow().repeatedly())
         .alongWith(m_driveSubsystem.confirmShootingPosition().repeatedly())
       )
+    );
+
+    m_driverController.x().whileTrue(
+      m_intakeSubsystem.setIdling().repeatedly().withTimeout(0.2)
+      .andThen(m_intakeSubsystem.removeNote().repeatedly())
     );
 
 

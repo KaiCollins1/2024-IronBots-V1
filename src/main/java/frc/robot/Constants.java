@@ -30,17 +30,21 @@ public final class Constants {
     public static final boolean kUseQuadEncoders = true;
     public static final double kConfirmShootDriveSpeed_PCT = 0.2;
     public static final double kConfirmShootDriveLength_SEC = 1.5;
-    public static final double kMaxDriveVelocity_MPS = 0;
-    public static final double kMaxDriveRotations_RADPS = kMaxDriveVelocity_MPS * 2 * Math.PI;
+    public static final double kMaxDriveVelocity_MPS = 4*(0.2);
+    public static final double kMaxDriveRotations_RADPS = 0.15;
     public static final int kMotorCurrentLimit_AMP = 58;
     
 
+    // //feedforward constants
+    // public static final double kS = 0.035675;
+    // public static final double kV = 2.0692;
+    // public static final double kA = 1.0056;
     //feedforward constants
-    public static final double kS = 0.035675;
-    public static final double kV = 2.0692;
-    public static final double kA = 1.0056;
+    public static final double kS = 0.28753;
+    public static final double kV = 1.7784;
+    public static final double kA = 1.2748;
     //velocity PID constants
-    public static final double kP = 1.4821;
+    public static final double kP = 1.4212;
     public static final double kD = 0;
     public static final double kI = 0;
 
@@ -109,7 +113,7 @@ public final class Constants {
     //subsystem config
     public static final boolean kUseAbsoluteEncoder = true;
     //public static final boolean kUseSmartMoveNRollDrive = false;
-    public static final double kConfirmNoteOwningDelay_SEC = 0.25;
+    public static final double kConfirmNoteOwningDelay_SEC = 0.1;
     // public static final double kGoalIntakeSpeed_MPS =  -0.25;
     // public static final double kGoalHandoffSpeed_MPS = .8;
     public static final double kHandoffTime_SEC = 1;
@@ -117,7 +121,7 @@ public final class Constants {
     public static final double kGoalHandoffSpeed_MPS = (5)*(60);
 
     public static final double kInsideBotPos_DEG = 280-1;
-    public static final double kIntakingPos_DEG = 56+4;
+    public static final double kIntakingPos_DEG = 56+6;
     public static final double kIdlePos_DEG = 200;
 
     //roller feedforward constants
