@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.drive.MecanumDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,54 +50,36 @@ private CANSparkMax leftLeaderMotor = new CANSparkMax(DriveSubsystemConstants.kL
 private CANSparkMax leftFollowerMotor = new CANSparkMax(DriveSubsystemConstants.kLeftBackMotorID, MotorType.kBrushless);
 private CANSparkMax rightLeaderMotor = new CANSparkMax(DriveSubsystemConstants.kRightFrontMotorID, MotorType.kBrushless);
 private CANSparkMax rightFollowerMotor = new CANSparkMax(DriveSubsystemConstants.kRightBackMotorID, MotorType.kBrushless);
-
 private DifferentialDrive drive;
 
 private SlewRateLimiter driveLimiter;
 
-private PIDController leftDrivePID = new PIDController(
-  DriveSubsystemConstants.kP, 
-  0, 
-  DriveSubsystemConstants.kD
-);
-private PIDController rightDrivePID = new PIDController(
-  DriveSubsystemConstants.kP, 
-  0,
-  DriveSubsystemConstants.kD
-);
-private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
-  DriveSubsystemConstants.kS,
-  DriveSubsystemConstants.kV,
-  DriveSubsystemConstants.kA
-);
-
+private PIDController leftDrivePID = new PIDController(DriveSubsystemConstants.kP,0,DriveSubsystemConstants.kD);
+private PIDController rightDrivePID = new PIDController(DriveSubsystemConstants.kP,0,DriveSubsystemConstants.kD);
+private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(DriveSubsystemConstants.kS,DriveSubsystemConstants.kV,DriveSubsystemConstants.kA);
 private DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(DriveSubsystemConstants.kTrackWidth_M);
+private DifferentialDriveOdometry driveOdometry;
+private Pose2d drivePose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
+private Field2d fieldPose = new Field2d();
 
 private RelativeEncoder leftLeaderHallSensor;
 private RelativeEncoder leftFollowerHallSensor;
 private RelativeEncoder rightLeaderHallSensor;
 private RelativeEncoder rightFollowerHallSensor;
-
 private Encoder leftQuadEncoder;
 private Encoder rightQuadEncoder;
-
-private PIDController tempLocationPID = new PIDController(0.5, 0, 0.00002);
-
 private AHRS gyro = new AHRS(SPI.Port.kMXP);
 
-private DifferentialDriveOdometry driveOdometry;
-private Pose2d drivePose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
-private Field2d fieldPose = new Field2d();
+// private PIDController tempLocationPID = new PIDController(0.5, 0, 0.00002);
+
+
 
 // Create the URCL compatable SysId routine
 private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   // new SysIdRoutine.Config(Volts.of(0.5), Volts.of(7), Seconds.of(10)),
-  new SysIdRoutine.Config(Volts.per(Seconds).of(0.75), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty
+  new SysIdRoutine.Config(Volts.per(Seconds).of(0.75), Volts.of(7), Seconds.of(10)), //we are not using advantage kit so we can just leave this empty
   new SysIdRoutine.Mechanism(
-    (Measure<Voltage> volts) -> {
-      leftLeaderMotor.setVoltage(volts.in(Volts));
-      rightLeaderMotor.setVoltage(volts.in(Volts));
-    },
+    (Measure<Voltage> volts) -> {leftLeaderMotor.setVoltage(volts.in(Volts)); rightLeaderMotor.setVoltage(volts.in(Volts));},
     null, // No log consumer, since data is recorded by URCL
     this
   )
@@ -109,10 +90,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   public DriveSubsystem(){
     motorConfig();
 
-    // drive.arcadeDriveIK()
-
-    //max output divided by time to accelerate = dO/s, acceleration
-    // driveLimiter = new SlewRateLimiter((1/0.5));
     driveLimiter = new SlewRateLimiter((1/0.25));
 
     zeroEncoders(false);
@@ -131,8 +108,6 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       new ReplanningConfig(), // Default path replanning config. See the API for the options here
       () -> {
         // Boolean supplier that controls when the path will be mirrored for the red alliance
-        // This will flip the path being followed to the red side of the field.
-        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
           return alliance.get() == DriverStation.Alliance.Red;

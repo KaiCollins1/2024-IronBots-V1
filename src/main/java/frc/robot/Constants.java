@@ -161,11 +161,24 @@ public final class Constants {
 
   public static class ClimberSubsystemConstants {
 
-    public static final int kRightMotorID = 12;
-    public static final int kLeftMotorID = 13;
+    public static final int kRightMotorID = 13;
+    public static final int kLeftMotorID = 12;
 
     public static final boolean kIsRightInverted = true;
-    public static final boolean kIsLeftInverted = false;
+    public static final boolean kIsLeftInverted = !kIsRightInverted;
+    public static final int kMotorCurrentLimit_AMP = 30;
+
+    public static final double kBottomPosition_DEG = 0;
+
+    public static final double kP = 0.001;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
+    public static final double kSpoolDiameter_IN = 1;
+    public static final double kClimbGearRatio = 20;
+    public static final double kPositionScalingFactor = (kSpoolDiameter_IN*Math.PI)/(kClimbGearRatio);
+
+    
 
   }
 }

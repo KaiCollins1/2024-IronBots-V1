@@ -59,6 +59,10 @@ public class SubsystemContainer {
         intakeSubsystem.removeNote().repeatedly()
     );
 
+    public final Command t_tempCommandCommand(CommandXboxController driverController){
+      return climberSubsystem.tempClimberControlCommand(driverController.a(), driverController.b());
+    }
+
 
     //AUTON Commands, a_
     public final Command a_shootStraight = 
@@ -121,10 +125,10 @@ public class SubsystemContainer {
     //SYSID Commands, s_
     public void s_bindSysIDCommands(CommandXboxController sysIDController){
         // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
-        sysIDController.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        sysIDController.b().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        sysIDController.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        sysIDController.y().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // sysIDController.b().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // sysIDController.y().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         
         // sysIDController.a().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         // sysIDController.b().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
