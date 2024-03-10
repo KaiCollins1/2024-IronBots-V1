@@ -79,19 +79,18 @@ public class SubsystemContainer {
     
     public final Command a_intakeCollect =
     new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          intakeSubsystem.setPrepHandoff(),
-          shooterSubsystem.setDisabled()
-        ),
         new SequentialCommandGroup(
           intakeSubsystem.setIntake().repeatedly().withTimeout(2),
+          shooterSubsystem.setDisabled()
+        ).withTimeout(1),
+        new ParallelRaceGroup(
+          intakeSubsystem.setPrepHandoff().repeatedly(),
           shooterSubsystem.setHandoffAllowance()
-        ).withTimeout(2.5),
+        ),
         new ParallelCommandGroup(
           intakeSubsystem.setPrepHandoff(),
           shooterSubsystem.setDisabled()
-        ),
-        new WaitCommand(0.15)
+        )
       );
 
     public final Command a_tempGetNoteDrive = 
@@ -119,10 +118,10 @@ public class SubsystemContainer {
     //SYSID Commands, s_
     public void s_bindSysIDCommands(CommandXboxController sysIDController){
         // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
-        // sysIDController.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // sysIDController.b().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // sysIDController.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // sysIDController.y().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        sysIDController.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        sysIDController.b().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        sysIDController.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        sysIDController.y().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         
         // sysIDController.a().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         // sysIDController.b().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

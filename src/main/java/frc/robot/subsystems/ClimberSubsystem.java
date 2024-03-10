@@ -57,44 +57,12 @@ public class ClimberSubsystem extends SubsystemBase {
 
   }
 
-  private double kSpeed = 0.2;
-
-  // public Command tempClimberControlCommand(BooleanSupplier up, BooleanSupplier down){
-  //   return (run(() -> {
-  //     if(up.getAsBoolean()){
-  //       leftMotor.set(kSpeed);
-  //       rightMotor.set(kSpeed);
-  //     }else if(down.getAsBoolean()){
-  //       leftMotor.set(-kSpeed);
-  //       rightMotor.set(-kSpeed);
-  //     }else{
-  //       leftMotor.set(0);
-  //       rightMotor.set(0);
-  //     }
-  //   }).withName("defualtTempControl"));
-  // }
-
-  // public Command tempPID(){
-  //   return (
-  //     run(() ->{
-  //       currentLeftPIDOutput = leftPID.calculate(leftHallSensor.getPosition(), ClimberSubsystemConstants.kBottomPosition_IN);
-  //       currentRightPIDOutput = rightPID.calculate(rightHallSensor.getPosition(), ClimberSubsystemConstants.kBottomPosition_IN);
-  //     }).withName("tempPID")
-  //   );
-  // }
-  // public Command defaultZero(){
-  //   return (
-  //     run(() ->{
-  //       currentLeftPIDOutput = leftPID.calculate(leftHallSensor.getPosition(), 0);
-  //       currentRightPIDOutput = rightPID.calculate(rightHallSensor.getPosition(), 0);
-  //     }).withName("defaultZero")
-  //   );
-  // }
-
   public Command lowerClimber(){
     return runOnce(() -> {
-      leftSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
-      rightSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
+      // leftSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
+      // rightSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
+      leftSetpoint = 0;
+      rightSetpoint = 0;
     });
   }
 
@@ -108,12 +76,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putData("ClimberSubsystem", this);
-    // SmartDashboard.putNumber("LeftPosition", leftHallSensor.getPosition());
-    // SmartDashboard.putNumber("RightPosition", rightHallSensor.getPosition());
     leftMotor.setVoltage(leftPID.calculate(leftHallSensor.getPosition(), leftSetpoint));
     rightMotor.setVoltage(rightPID.calculate(rightHallSensor.getPosition(), rightSetpoint));
-    // SmartDashboard.putNumber("leftClTho", currentLeftPIDOutput);
-    // SmartDashboard.putNumber("rightClTho", currentRightPIDOutput);
   }
 }

@@ -135,7 +135,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command setIntake(){
     return runOnce(() -> {
-      intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
+      // intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
     }).unless(hasNote).repeatedly().withName("intaking");
   }

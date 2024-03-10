@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3447749235904711,
+        "x": 1.34,
         "y": 5.551508791145547
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8447749235904711,
+        "x": 1.84,
         "y": 5.551508791145547
       },
       "isLocked": false,
@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.4442262677013367,
+        "x": 2.5,
         "y": 5.551508791145547
       },
       "prevControl": {
-        "x": 1.9442262677013367,
+        "x": 2.0,
         "y": 5.551508791145547
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "NoteM"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -51,7 +51,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 0.75,
-    "maxAcceleration": 0.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },

@@ -8,6 +8,10 @@ import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -54,9 +58,10 @@ private DifferentialDrive drive;
 
 private SlewRateLimiter driveLimiter;
 
-private PIDController leftDrivePID = new PIDController(DriveSubsystemConstants.kP,0,DriveSubsystemConstants.kD);
-private PIDController rightDrivePID = new PIDController(DriveSubsystemConstants.kP,0,DriveSubsystemConstants.kD);
-private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(DriveSubsystemConstants.kS,DriveSubsystemConstants.kV,DriveSubsystemConstants.kA);
+private PIDController leftDrivePID = new PIDController(DriveSubsystemConstants.kLP,0,DriveSubsystemConstants.kLD);
+private PIDController rightDrivePID = new PIDController(DriveSubsystemConstants.kRP,0,DriveSubsystemConstants.kRD);
+private SimpleMotorFeedforward leftFeedForward = new SimpleMotorFeedforward(DriveSubsystemConstants.kLS,DriveSubsystemConstants.kLV,DriveSubsystemConstants.kLA);
+private SimpleMotorFeedforward rightFeedForward = new SimpleMotorFeedforward(DriveSubsystemConstants.kRS,DriveSubsystemConstants.kRV,DriveSubsystemConstants.kRA);
 private DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(DriveSubsystemConstants.kTrackWidth_M);
 private DifferentialDriveOdometry driveOdometry;
 private Pose2d drivePose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
@@ -129,7 +134,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     SmartDashboard.putData("FieldPosition", fieldPose);
     SmartDashboard.putNumber("LeftSpeed", getAvgLeftVelocity());
     SmartDashboard.putNumber("RightSpeed", getAvgRightVelocity());
-    SmartDashboard.putNumber("rotSpeedRADPS", Units.DegreesPerSecond.of(gyro.getRate()).in(RadiansPerSecond));
+    // SmartDashboard.putNumber("rotSpeedRADPS", Units.DegreesPerSecond.of(gyro.getRate()).in(RadiansPerSecond));
   }
 
   public Command teleopDriveCommand(DoubleSupplier fwdSupplier, DoubleSupplier rotSupplier){
@@ -167,11 +172,11 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     double leftSpeed = -driveKinematics.toWheelSpeeds(speed).leftMetersPerSecond;
     double rightSpeed = -driveKinematics.toWheelSpeeds(speed).rightMetersPerSecond;
     leftLeaderMotor.setVoltage(
-      driveFeedforward.calculate(leftSpeed)+
+      leftFeedForward.calculate(leftSpeed)+
       leftDrivePID.calculate(getAvgLeftVelocity(), leftSpeed)
     );
     rightLeaderMotor.setVoltage(
-      driveFeedforward.calculate(rightSpeed)+
+      rightFeedForward.calculate(rightSpeed)+
       rightDrivePID.calculate(getAvgRightVelocity(), rightSpeed)
     );
   }
@@ -183,9 +188,9 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   }
 
   // private void voltageDumbArcadeDrive(double fwd, double rot, boolean squareInputs){
-  //   edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds nWheelSpeeds = drive.arcadeDriveIK(fwd, rot, squareInputs);
+  //   edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds speeds = drive.arcadeDriveIK(fwd, rot, squareInputs);
   //   leftLeaderMotor.setVoltage(
-  //     12 * (nWheelSpeeds.)
+  //     12 * (speeds.)
   //   );
   // }
 
@@ -201,40 +206,40 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   private double getAvgLeftPosition() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
-      leftQuadEncoder.getDistance():
-      (leftLeaderHallSensor.getPosition() + leftFollowerHallSensor.getPosition()) / 2
+      -leftQuadEncoder.getDistance():
+      -(leftLeaderHallSensor.getPosition() + leftFollowerHallSensor.getPosition()) / 2
     );
   }
 
   private double getAvgLeftVelocity() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
-      leftQuadEncoder.getRate():
-      (leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 2
+      -leftQuadEncoder.getRate():
+      -(leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 2
     );
   }
 
   private double getAvgRightPosition() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
-      rightQuadEncoder.getDistance():
-      (rightLeaderHallSensor.getPosition() + rightFollowerHallSensor.getPosition()) / 2
+      -rightQuadEncoder.getDistance():
+      -(rightLeaderHallSensor.getPosition() + rightFollowerHallSensor.getPosition()) / 2
     );
   }
 
   private double getAvgRightVelocity() {
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
-      rightQuadEncoder.getRate():
-      (rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()) / 2
+      -rightQuadEncoder.getRate():
+      -(rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()) / 2
     );
   }
 
   private double getAvgVelocity(){
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
-      (rightQuadEncoder.getRate() + leftQuadEncoder.getRate())/2:
-      (rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()+ leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 4
+      -(rightQuadEncoder.getRate() + leftQuadEncoder.getRate())/2:
+      -(rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()+ leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 4
     );
   }
 
@@ -255,6 +260,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
 
   private void zeroGyro(boolean recalcOdometry) {
     gyro.reset();
+    gyro.zeroYaw();
     if(recalcOdometry) driveOdometry.resetPosition(new Rotation2d(0), getAvgLeftPosition(), getAvgRightPosition(), drivePose);
   }
 

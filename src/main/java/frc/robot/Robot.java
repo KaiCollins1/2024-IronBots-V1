@@ -10,8 +10,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,15 +37,19 @@ public class Robot extends TimedRobot {
   private SendableChooser<Command> autoChooser;
   private Command autonomousCommand;
 
+  // private DoubleArraySubscriber bool;
+  // private NetworkTable table = NetworkTableInstance.getDefault().getTable("PathPlanner");
+
   // This function is run when the robot is first started up and should be used for any initialization code.
   @Override
   public void robotInit() {
     CameraServer.startAutomaticCapture();
+
     
     driverController.rightBumper().whileTrue(systemContainer.t_intakeNote).onFalse(systemContainer.t_handoffNote);
     driverController.leftBumper().whileTrue(systemContainer.t_shootNote);
-    driverController.x().whileTrue(systemContainer.t_removeNote);
-    driverController.y().whileTrue(systemContainer.t_climberUp);
+    // driverController.x().whileTrue(systemContainer.t_removeNote);
+    // driverController.y().whileTrue(systemContainer.t_climberUp);
 
     systemContainer.d_setDefaultCommands(driverController);
 
