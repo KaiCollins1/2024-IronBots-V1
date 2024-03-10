@@ -99,6 +99,8 @@ public class IntakeSubsystem extends SubsystemBase {
      rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
     );
 
+    
+    SmartDashboard.putData("IntakeSubsystem", this);
     SmartDashboard.putNumber("Intake Angle", intakeSetpoint_DEG);
     SmartDashboard.putNumber("tempWhatIntakeSays2222", temp);
     SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());

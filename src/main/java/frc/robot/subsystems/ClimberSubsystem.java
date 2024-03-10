@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import javax.management.relation.Relation;
+import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardDownRightHandler;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -15,6 +16,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberSubsystemConstants;
@@ -28,13 +30,15 @@ public class ClimberSubsystem extends SubsystemBase {
   private RelativeEncoder rightHallSensor;
   private PIDController rightPID;
   private PIDController leftPID;
+  private double leftSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
+  private double rightSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
 
   public ClimberSubsystem() {
 
     leftMotor = new CANSparkMax(ClimberSubsystemConstants.kLeftMotorID, MotorType.kBrushless);
     rightMotor = new CANSparkMax(ClimberSubsystemConstants.kRightMotorID, MotorType.kBrushless);
-    leftMotor.setIdleMode(IdleMode.kBrake);
-    rightMotor.setIdleMode(IdleMode.kBrake);
+    leftMotor.setIdleMode(ClimberSubsystemConstants.kMotorMode);
+    rightMotor.setIdleMode(ClimberSubsystemConstants.kMotorMode);
     leftMotor.setInverted(ClimberSubsystemConstants.kIsLeftInverted);
     rightMotor.setInverted(ClimberSubsystemConstants.kIsRightInverted);
     leftMotor.setSmartCurrentLimit(ClimberSubsystemConstants.kMotorCurrentLimit_AMP);
@@ -44,6 +48,8 @@ public class ClimberSubsystem extends SubsystemBase {
     rightHallSensor = rightMotor.getEncoder();
     leftHallSensor.setPositionConversionFactor(ClimberSubsystemConstants.kPositionScalingFactor);
     rightHallSensor.setPositionConversionFactor(ClimberSubsystemConstants.kPositionScalingFactor);
+    leftHallSensor.setPosition(0);
+    rightHallSensor.setPosition(0);
 
     leftPID = new PIDController(ClimberSubsystemConstants.kP, ClimberSubsystemConstants.kI, ClimberSubsystemConstants.kD);
     rightPID = new PIDController(ClimberSubsystemConstants.kP, ClimberSubsystemConstants.kI, ClimberSubsystemConstants.kD);
@@ -53,23 +59,61 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private double kSpeed = 0.2;
 
-  public Command tempClimberControlCommand(BooleanSupplier up, BooleanSupplier down){
-    return (run(() -> {
-      if(up.getAsBoolean()){
-        leftMotor.set(kSpeed);
-        rightMotor.set(kSpeed);
-      }else if(down.getAsBoolean()){
-        leftMotor.set(-kSpeed);
-        rightMotor.set(-kSpeed);
-      }else{
-        leftMotor.set(0);
-        rightMotor.set(0);
-      }
-    }));
+  // public Command tempClimberControlCommand(BooleanSupplier up, BooleanSupplier down){
+  //   return (run(() -> {
+  //     if(up.getAsBoolean()){
+  //       leftMotor.set(kSpeed);
+  //       rightMotor.set(kSpeed);
+  //     }else if(down.getAsBoolean()){
+  //       leftMotor.set(-kSpeed);
+  //       rightMotor.set(-kSpeed);
+  //     }else{
+  //       leftMotor.set(0);
+  //       rightMotor.set(0);
+  //     }
+  //   }).withName("defualtTempControl"));
+  // }
+
+  // public Command tempPID(){
+  //   return (
+  //     run(() ->{
+  //       currentLeftPIDOutput = leftPID.calculate(leftHallSensor.getPosition(), ClimberSubsystemConstants.kBottomPosition_IN);
+  //       currentRightPIDOutput = rightPID.calculate(rightHallSensor.getPosition(), ClimberSubsystemConstants.kBottomPosition_IN);
+  //     }).withName("tempPID")
+  //   );
+  // }
+  // public Command defaultZero(){
+  //   return (
+  //     run(() ->{
+  //       currentLeftPIDOutput = leftPID.calculate(leftHallSensor.getPosition(), 0);
+  //       currentRightPIDOutput = rightPID.calculate(rightHallSensor.getPosition(), 0);
+  //     }).withName("defaultZero")
+  //   );
+  // }
+
+  public Command lowerClimber(){
+    return runOnce(() -> {
+      leftSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
+      rightSetpoint = ClimberSubsystemConstants.kBottomPosition_IN;
+    });
   }
+
+  public Command raiseClimber(){
+    return runOnce(() -> {
+      leftSetpoint = 0;
+      rightSetpoint = 0;
+    });
+  }
+
 
   @Override
   public void periodic() {
-    
+    // SmartDashboard.putData("ClimberSubsystem", this);
+    // SmartDashboard.putNumber("LeftPosition", leftHallSensor.getPosition());
+    // SmartDashboard.putNumber("RightPosition", rightHallSensor.getPosition());
+    leftMotor.setVoltage(leftPID.calculate(leftHallSensor.getPosition(), leftSetpoint));
+    rightMotor.setVoltage(rightPID.calculate(rightHallSensor.getPosition(), rightSetpoint));
+    // SmartDashboard.putNumber("leftClTho", currentLeftPIDOutput);
+    // SmartDashboard.putNumber("rightClTho", currentRightPIDOutput);
   }
 }

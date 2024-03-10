@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
   
   private final SubsystemContainer systemContainer = new SubsystemContainer();
   private final CommandXboxController driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
-  private  SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoChooser;
   private Command autonomousCommand;
 
   // This function is run when the robot is first started up and should be used for any initialization code.
@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
     driverController.rightBumper().whileTrue(systemContainer.t_intakeNote).onFalse(systemContainer.t_handoffNote);
     driverController.leftBumper().whileTrue(systemContainer.t_shootNote);
     driverController.x().whileTrue(systemContainer.t_removeNote);
+    driverController.y().whileTrue(systemContainer.t_climberUp);
 
     systemContainer.d_setDefaultCommands(driverController);
 

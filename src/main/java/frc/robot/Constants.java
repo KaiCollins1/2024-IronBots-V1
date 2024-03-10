@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -117,7 +119,7 @@ public final class Constants {
     // public static final double kGoalIntakeSpeed_MPS =  -0.25;
     // public static final double kGoalHandoffSpeed_MPS = .8;
     public static final double kHandoffTime_SEC = 1;
-    public static final double kGoalIntakeSpeed_MPS =  -(1.75)*(60);
+    public static final double kGoalIntakeSpeed_MPS =  -(1.5)*(60);
     public static final double kGoalHandoffSpeed_MPS = (5)*(60);
 
     public static final double kInsideBotPos_DEG = 280-1;
@@ -164,17 +166,18 @@ public final class Constants {
     public static final int kRightMotorID = 13;
     public static final int kLeftMotorID = 12;
 
-    public static final boolean kIsRightInverted = true;
+    public static final boolean kIsRightInverted = false;
     public static final boolean kIsLeftInverted = !kIsRightInverted;
     public static final int kMotorCurrentLimit_AMP = 30;
 
-    public static final double kBottomPosition_DEG = 0;
+    public static final IdleMode kMotorMode = IdleMode.kBrake;
 
-    public static final double kP = 0.001;
+    public static final double kP = 15;
     public static final double kI = 0;
     public static final double kD = 0;
-
-    public static final double kSpoolDiameter_IN = 1;
+    
+    public static final double kBottomPosition_IN = -13;
+    public static final double kSpoolDiameter_IN = .75+(0.11);
     public static final double kClimbGearRatio = 20;
     public static final double kPositionScalingFactor = (kSpoolDiameter_IN*Math.PI)/(kClimbGearRatio);
 

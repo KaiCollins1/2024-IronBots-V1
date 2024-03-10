@@ -21,22 +21,19 @@ import frc.robot.subsystems.ShooterSubsystem;
 /** Add your docs here. */
 public class SubsystemContainer {
 
-    private ClimberSubsystem climberSubsystem;
-    private DriveSubsystem driveSubsystem;
-    private IntakeSubsystem intakeSubsystem;
-    private LEDSubsystem ledSubsystem;
-    private ShooterSubsystem shooterSubsystem;
+    private ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    private DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    private LEDSubsystem ledSubsystem = new LEDSubsystem();
+    private ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-    public SubsystemContainer(){
-        climberSubsystem = new ClimberSubsystem();
-        driveSubsystem = new DriveSubsystem();
-        intakeSubsystem = new IntakeSubsystem();
-        ledSubsystem = new LEDSubsystem();
-        shooterSubsystem = new ShooterSubsystem();
-    }
+    public SubsystemContainer(){}
 
     //TELOP Commands, t_
     public final Command t_intakeNote = intakeSubsystem.setIntake();
+    public final Command t_climberUp = climberSubsystem.raiseClimber().repeatedly();
+    public final Command t_climberDown = climberSubsystem.lowerClimber().repeatedly();
+    
     public final Command t_handoffNote = 
     new ParallelCommandGroup(
         intakeSubsystem.setPrepHandoff(),
@@ -58,10 +55,6 @@ public class SubsystemContainer {
         intakeSubsystem.setIdling().repeatedly().withTimeout(0.2),
         intakeSubsystem.removeNote().repeatedly()
     );
-
-    public final Command t_tempCommandCommand(CommandXboxController driverController){
-      return climberSubsystem.tempClimberControlCommand(driverController.a(), driverController.b());
-    }
 
 
     //AUTON Commands, a_
@@ -120,6 +113,7 @@ public class SubsystemContainer {
         );
         CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, shooterSubsystem.setDisabled());
         CommandScheduler.getInstance().setDefaultCommand(intakeSubsystem, intakeSubsystem.setPrepHandoff());
+        CommandScheduler.getInstance().setDefaultCommand(climberSubsystem, t_climberDown);
     }
 
     //SYSID Commands, s_
