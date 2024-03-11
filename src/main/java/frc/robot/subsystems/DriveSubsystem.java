@@ -28,6 +28,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -104,11 +105,12 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     AutoBuilder.configureRamsete(
       () -> drivePose, // Robot pose supplier
       this::setPose2d, // Method to reset odometry (will be called if your auto has a starting pose)
-      () -> new ChassisSpeeds( // Current ChassisSpeeds supplier
-        getAvgVelocity(),
-        0,
-        Units.DegreesPerSecond.of(gyro.getRate()).in(RadiansPerSecond)
-      ),
+      // () -> new ChassisSpeeds( // Current ChassisSpeeds supplier
+      //   getAvgVelocity(),
+      //   0,
+      //   Units.DegreesPerSecond.of(gyro.getRate()).in(RadiansPerSecond)
+      // )
+      () -> driveKinematics.toChassisSpeeds(new DifferentialDriveWheelSpeeds(getAvgLeftVelocity(), getAvgRightVelocity())),
       this::rawChassisSpeedDrive, // Method that will drive the robot given ChassisSpeeds
       new ReplanningConfig(), // Default path replanning config. See the API for the options here
       () -> {
@@ -126,6 +128,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
 
   @Override
   public void periodic() {
+    drive.feedWatchdog();
     // This method will be called once per scheduler run
     drivePose = driveOdometry.update(gyro.getRotation2d(), getAvgLeftPosition(), getAvgRightPosition());
     fieldPose.setRobotPose(drivePose);
@@ -239,21 +242,19 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     return (
       DriveSubsystemConstants.kUseQuadEncoders?
       -(rightQuadEncoder.getRate() + leftQuadEncoder.getRate())/2:
-      -(rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity()+ leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 4
+      -(rightLeaderHallSensor.getVelocity() + rightFollowerHallSensor.getVelocity() + leftLeaderHallSensor.getVelocity() + leftFollowerHallSensor.getVelocity()) / 4
     );
   }
 
   //reset all of the encoders to zero
   private void zeroEncoders(boolean recalcOdometry) {
-    if(!DriveSubsystemConstants.kUseQuadEncoders){
-      leftLeaderHallSensor.setPosition(0);
-      leftFollowerHallSensor.setPosition(0);
-      rightLeaderHallSensor.setPosition(0);
-      rightFollowerHallSensor.setPosition(0);
-    }else{
-      leftQuadEncoder.reset();
-      rightQuadEncoder.reset();
-    }
+    leftLeaderHallSensor.setPosition(0);
+    leftFollowerHallSensor.setPosition(0);
+    rightLeaderHallSensor.setPosition(0);
+    rightFollowerHallSensor.setPosition(0);
+  
+    leftQuadEncoder.reset();
+    rightQuadEncoder.reset();
 
     if(recalcOdometry) driveOdometry.resetPosition(gyro.getRotation2d(), 0, 0, drivePose);
   }
@@ -309,10 +310,21 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     leftFollowerHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
     rightLeaderHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
     rightFollowerHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
+
     leftLeaderHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
     leftFollowerHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
     rightLeaderHallSensor.setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor);
     rightFollowerHallSensor.setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor);
+
+    leftLeaderHallSensor.setAverageDepth(DriveSubsystemConstants.kEncoderAverageDepth);
+    leftFollowerHallSensor.setAverageDepth(DriveSubsystemConstants.kEncoderAverageDepth);
+    rightLeaderHallSensor.setAverageDepth(DriveSubsystemConstants.kEncoderAverageDepth);
+    rightFollowerHallSensor.setAverageDepth(DriveSubsystemConstants.kEncoderAverageDepth);
+
+    leftLeaderHallSensor.setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS);
+    leftFollowerHallSensor.setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS);
+    rightLeaderHallSensor.setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS);
+    rightFollowerHallSensor.setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS);
 
 
     leftQuadEncoder = new Encoder(

@@ -29,7 +29,7 @@ public final class Constants {
 
     //major drive config changes
     public static final boolean kUseSmartTeleopDrive = false;
-    public static final boolean kUseQuadEncoders = true;
+    public static final boolean kUseQuadEncoders = false;
     public static final double kConfirmShootDriveSpeed_PCT = 0.2;
     public static final double kConfirmShootDriveLength_SEC = 1.5;
     public static final double kMaxDriveVelocity_MPS = 4*(0.2);
@@ -54,8 +54,8 @@ public final class Constants {
     public static final double kLD = 0;
     public static final double kLI = 0;
     //right feedforward constants
-    public static final double kRS = (0.13186 + 0.078695)/2 - 0.08;
-    public static final double kRV = (2.2076 + 1.8034)/2 - 0.53;
+    public static final double kRS = (0.13186 + 0.078695)/2;// - 0.08;
+    public static final double kRV = (2.2076 + 1.8034)/2 - 0.13;
     public static final double kRA = (0.96977 + 1.7498)/2;
     //right velocity PID constants
     public static final double kRP = (1.2113 + 1.6714)/2;
@@ -66,6 +66,10 @@ public final class Constants {
     //converts between revolutions to meters and rpm and mps
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46);
     public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46*60);
+    //values for the encoder's filters. average depth must be a power of two, up to 8. default is 64 idk why it's different
+    public static final int kEncoderAverageDepth = 1;
+    //this has to be from 8 to 64
+    public static final int kEncoderMeasurementPeriod_MS = 8;
 
     //Quad Encoder constants
     public static final int kLeftEncoderPortA = 0; //3pin with blue
@@ -82,7 +86,7 @@ public final class Constants {
     public static final int kRightBackMotorID = 7;
     public static final double kTrackWidth_M = Units.inchesToMeters(21.869);
     public static final boolean kIsLeftInverted = true;
-    public static final boolean kIsRightInverted = false;
+    public static final boolean kIsRightInverted = !kIsLeftInverted;
 
 
   }
