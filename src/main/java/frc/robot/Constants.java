@@ -46,19 +46,35 @@ public final class Constants {
     // public static final double kV = 1.7784;
     // public static final double kA = 1.2748;
     //left feedforward constants
-    public static final double kLS = (0.061834 + 0.13059)/2;
-    public static final double kLV = (2.1738 + 2.2335)/2;
-    public static final double kLA = (1.0994 + 0.87323)/2;
+    // public static final double kLS = (0.061834 + 0.13059)/2;
+    // public static final double kLV = (2.1738 + 2.2335)/2;
+    // public static final double kLA = (1.0994 + 0.87323)/2;
+    // //left velocity PID constants
+    // public static final double kLP = (1.3617 + 1.0058)/2;
+    // public static final double kLD = 0;
+    // public static final double kLI = 0;
+    // //right feedforward constants
+    // public static final double kRS = (0.13186 + 0.078695)/2;// - 0.08;
+    // public static final double kRV = (2.2076 + 1.8034)/2 - 0.13;
+    // public static final double kRA = (0.96977 + 1.7498)/2;
+    // //right velocity PID constants
+    // public static final double kRP = (1.2113 + 1.6714)/2;
+    // public static final double kRD = 0;
+    // public static final double kRI = 0;
+    //left feedforward constants
+    public static final double kLS = 0.061834;
+    public static final double kLV = 2.1738;
+    public static final double kLA = 1.0994;
     //left velocity PID constants
-    public static final double kLP = (1.3617 + 1.0058)/2;
+    public static final double kLP = 1.3617;
     public static final double kLD = 0;
     public static final double kLI = 0;
     //right feedforward constants
-    public static final double kRS = (0.13186 + 0.078695)/2;// - 0.08;
-    public static final double kRV = (2.2076 + 1.8034)/2 - 0.13;
-    public static final double kRA = (0.96977 + 1.7498)/2;
+    public static final double kRS = 0.13186;
+    public static final double kRV = 2.2076;
+    public static final double kRA = 0.96977;
     //right velocity PID constants
-    public static final double kRP = (1.2113 + 1.6714)/2;
+    public static final double kRP = 1.2113;
     public static final double kRD = 0;
     public static final double kRI = 0;
 
