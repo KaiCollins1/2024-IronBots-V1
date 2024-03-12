@@ -142,7 +142,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command removeNote(){
-    return this.setIdling().repeatedly().withTimeout(0.4).andThen(runOnce(() -> {
+    return this.setIdling().andThen(new WaitCommand(0.4)).andThen(runOnce(() -> {
       intakeSetpoint_DEG = (IntakeSubsystemConstants.kIntakingPos_DEG+IntakeSubsystemConstants.kIdlePos_DEG)/2;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
     })).withName("REMOVE"); 
