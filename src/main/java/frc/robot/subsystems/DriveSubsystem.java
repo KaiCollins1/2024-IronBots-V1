@@ -283,6 +283,11 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     // configDriveHallSensors(rightLeaderMotor);
     // configDriveHallSensors(rightFollowerMotor);
 
+    leftLeaderMotor.restoreFactoryDefaults();
+    leftFollowerMotor.restoreFactoryDefaults();
+    rightLeaderMotor.restoreFactoryDefaults();
+    rightFollowerMotor.restoreFactoryDefaults();
+
     leftLeaderMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
     leftFollowerMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
     rightLeaderMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
@@ -333,6 +338,11 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     leftFollowerHallSensor.setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS);
     rightLeaderHallSensor.setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS);
     rightFollowerHallSensor.setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS);
+
+    leftLeaderMotor.burnFlash();
+    leftFollowerMotor.burnFlash();
+    rightLeaderMotor.burnFlash();
+    rightFollowerMotor.burnFlash();
 
 
     leftQuadEncoder = new Encoder(

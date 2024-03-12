@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -92,6 +93,18 @@ public class SubsystemContainer {
           shooterSubsystem.setDisabled()
         )
       );
+    public SendableChooser<Command> a_waitChooser(){
+
+      SendableChooser<Command> waitChooser = new SendableChooser<>();
+      waitChooser.setDefaultOption("0sec", driveSubsystem.doNothing());
+      waitChooser.addOption("1", driveSubsystem.doNothing().repeatedly().withTimeout(1));
+      waitChooser.addOption("2", driveSubsystem.doNothing().repeatedly().withTimeout(2));
+      waitChooser.addOption("3", driveSubsystem.doNothing().repeatedly().withTimeout(3));
+      waitChooser.addOption("4", driveSubsystem.doNothing().repeatedly().withTimeout(4));
+      waitChooser.addOption("5", driveSubsystem.doNothing().repeatedly().withTimeout(5));
+      return waitChooser;
+
+    }
 
     public final Command a_tempGetNoteDrive = 
         driveSubsystem.goDirectionTimeout(2,0.45,false);

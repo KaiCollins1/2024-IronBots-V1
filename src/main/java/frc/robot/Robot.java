@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.GeneralConstants;
 
@@ -35,6 +36,7 @@ public class Robot extends TimedRobot {
   private final SubsystemContainer systemContainer = new SubsystemContainer();
   private final CommandXboxController driverController = new CommandXboxController(GeneralConstants.kDriverControllerPort);
   private SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> waitChooser;
   private Command autonomousCommand;
 
   // private DoubleArraySubscriber bool;
@@ -60,6 +62,9 @@ public class Robot extends TimedRobot {
     NamedCommands.registerCommand("TempGetNoteDrive", systemContainer.a_tempGetNoteDrive);
     NamedCommands.registerCommand("TempReturnNoteDrive", systemContainer.a_tempReturnNoteDrive);
     NamedCommands.registerCommand("satisfyDDMW", systemContainer.a_satisfyDDMW);
+
+    waitChooser = systemContainer.a_waitChooser();
+    SmartDashboard.putData("Wait Chooser", waitChooser);
 
     //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
     //To FTP to the roboRIO, open a Windows Explorer window. In the address bar, 
@@ -101,8 +106,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomousCommand = autoChooser.getSelected();
-    // schedule the autonomous command (example)
+    autonomousCommand = new SequentialCommandGroup(
+      waitChooser.getSelected(),
+      autoChooser.getSelected()
+    );
+
+    // schedule the autonomous command
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
