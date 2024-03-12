@@ -70,8 +70,8 @@ public final class Constants {
     public static final double kLD = 0;
     public static final double kLI = 0;
     //right feedforward constants
-    public static final double kRS = 0.13186;
-    public static final double kRV = 2.2076;
+    public static final double kRS = 0.13186;//-0.08;
+    public static final double kRV = 2.2076;//-0.2;
     public static final double kRA = 0.96977;
     //right velocity PID constants
     public static final double kRP = 1.2113;
@@ -80,8 +80,8 @@ public final class Constants {
 
     //Relative Encoder constants
     //converts between revolutions to meters and rpm and mps
-    public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46);
-    public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(6)*Math.PI)/(8.46*60);
+    public static final double kEncoderPositionScalingFactor = (((Units.inchesToMeters(6)*Math.PI)/(8.46))*(109/129));
+    public static final double kEncoderVelocityScalingFactor = (((Units.inchesToMeters(6)*Math.PI)/(8.46*60))*(109/129));
     //values for the encoder's filters. average depth must be a power of two, up to 8. default is 64 idk why it's different
     public static final int kEncoderAverageDepth = 1;
     //this has to be from 8 to 64

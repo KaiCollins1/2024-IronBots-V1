@@ -14,6 +14,7 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -47,6 +48,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.DriveSubsystemConstants;
+import frc.robot.libs1155.FaultLogger;
+import frc.robot.libs1155.SparkUtils;
 
 
 public class DriveSubsystem extends SubsystemBase {
@@ -274,6 +277,11 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
   }
 
   private void motorConfig(){
+    
+    // configDriveHallSensors(leftLeaderMotor);
+    // configDriveHallSensors(leftFollowerMotor);
+    // configDriveHallSensors(rightLeaderMotor);
+    // configDriveHallSensors(rightFollowerMotor);
 
     leftLeaderMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
     leftFollowerMotor.setSmartCurrentLimit(DriveSubsystemConstants.kMotorCurrentLimit_AMP);
@@ -343,6 +351,16 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     leftQuadEncoder.setDistancePerPulse(DriveSubsystemConstants.kDistancePerPulse);
     rightQuadEncoder.setDistancePerPulse(DriveSubsystemConstants.kDistancePerPulse);
 
+  }
+
+  private void configDriveHallSensors(CANSparkBase spark){
+    SparkUtils.configure(
+      spark, 
+      () -> spark.getEncoder().setPositionConversionFactor(DriveSubsystemConstants.kEncoderPositionScalingFactor),
+      () -> spark.getEncoder().setVelocityConversionFactor(DriveSubsystemConstants.kEncoderVelocityScalingFactor),
+      () -> spark.getEncoder().setAverageDepth(DriveSubsystemConstants.kEncoderAverageDepth),
+      () -> spark.getEncoder().setMeasurementPeriod(DriveSubsystemConstants.kEncoderMeasurementPeriod_MS)
+    );
   }
 
 }
