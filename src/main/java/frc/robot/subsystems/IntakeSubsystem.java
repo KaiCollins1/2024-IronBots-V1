@@ -135,17 +135,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command setIntake(){
     return runOnce(() -> {
-      // intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
-      intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
+      // intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
     }).unless(hasNote).repeatedly().withName("intaking");
   }
 
   public Command removeNote(){
-    return runOnce(() -> {
+    return this.setIdling().repeatedly().withTimeout(0.4).andThen(runOnce(() -> {
       intakeSetpoint_DEG = (IntakeSubsystemConstants.kIntakingPos_DEG+IntakeSubsystemConstants.kIdlePos_DEG)/2;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
-    }).withName("handoff"); 
+    })).withName("REMOVE"); 
   }
 
   // public Command autoCollectNote(){

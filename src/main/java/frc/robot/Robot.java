@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
     systemContainer.s_bindSysIDCommands(driverController);
 
     NamedCommands.registerCommand("intakeCollect", systemContainer.a_intakeCollect);
+    NamedCommands.registerCommand("intakeReturn", systemContainer.a_intakeReturn);
     NamedCommands.registerCommand("straightShoot", systemContainer.a_shootStraight);
     NamedCommands.registerCommand("TempGetNoteDrive", systemContainer.a_tempGetNoteDrive);
     NamedCommands.registerCommand("TempReturnNoteDrive", systemContainer.a_tempReturnNoteDrive);
@@ -106,10 +107,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomousCommand = new SequentialCommandGroup(
-      waitChooser.getSelected(),
-      autoChooser.getSelected()
-    );
+    // autonomousCommand = new SequentialCommandGroup(
+    //   waitChooser.getSelected(),
+    //   autoChooser.getSelected()
+    // );
+    autonomousCommand = autoChooser.getSelected();
 
     // schedule the autonomous command
     if (autonomousCommand != null) {

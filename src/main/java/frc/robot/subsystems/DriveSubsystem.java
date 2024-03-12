@@ -106,7 +106,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     driveOdometry = new DifferentialDriveOdometry(new Rotation2d(0), 0, 0);
 
     AutoBuilder.configureRamsete(
-      () -> drivePose, // Robot pose supplier
+      this::getPose2d, // Robot pose supplier
       this::setPose2d, // Method to reset odometry (will be called if your auto has a starting pose)
       // () -> new ChassisSpeeds( // Current ChassisSpeeds supplier
       //   getAvgVelocity(),
@@ -206,6 +206,10 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       new DifferentialDriveWheelPositions(getAvgLeftPosition(), getAvgRightPosition()),
       newPose
     );
+  }
+
+  private Pose2d getPose2d(){
+    return drivePose;
   }
 
   //get average (avg) values of encoders

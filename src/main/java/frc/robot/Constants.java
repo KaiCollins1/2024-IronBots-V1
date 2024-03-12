@@ -66,7 +66,7 @@ public final class Constants {
     public static final double kLV = 2.1738;
     public static final double kLA = 1.0994;
     //left velocity PID constants
-    public static final double kLP = 1.3617;
+    public static final double kLP = 1.3617-1;
     public static final double kLD = 0;
     public static final double kLI = 0;
     //right feedforward constants
@@ -74,18 +74,23 @@ public final class Constants {
     public static final double kRV = 2.2076;//-0.2;
     public static final double kRA = 0.96977;
     //right velocity PID constants
-    public static final double kRP = 1.2113;
+    public static final double kRP = 1.2113-1;
     public static final double kRD = 0;
     public static final double kRI = 0;
 
     //Relative Encoder constants
-    //converts between revolutions to meters and rpm and mps
-    public static final double kEncoderPositionScalingFactor = (((Units.inchesToMeters(6)*Math.PI)/(8.46))*(109/129));
-    public static final double kEncoderVelocityScalingFactor = (((Units.inchesToMeters(6)*Math.PI)/(8.46*60))*(109/129));
+    //converts between revolutions to meters and rpm and mps *(69.0/49.0)
+    public static final double kEncoderPositionScalingFactor = (((Units.inchesToMeters(6)*Math.PI)/(8.46))  );
+    public static final double kEncoderVelocityScalingFactor = (((Units.inchesToMeters(6)*Math.PI)/(8.46*60))  );
+    // //values for the encoder's filters. average depth must be a power of two, up to 8. default is 64 idk why it's different
+    // public static final int kEncoderAverageDepth = 1;
+    // //this has to be from 8 to 64
+    // public static final int kEncoderMeasurementPeriod_MS = 8;
+
     //values for the encoder's filters. average depth must be a power of two, up to 8. default is 64 idk why it's different
-    public static final int kEncoderAverageDepth = 1;
+    public static final int kEncoderAverageDepth = 2;
     //this has to be from 8 to 64
-    public static final int kEncoderMeasurementPeriod_MS = 8;
+    public static final int kEncoderMeasurementPeriod_MS = 16;
 
     //Quad Encoder constants
     public static final int kLeftEncoderPortA = 0; //3pin with blue
@@ -135,7 +140,7 @@ public final class Constants {
     //encoder constants
     //converts between revolutions/rpm to meters and m/s
     public static final double kEncoderPositionScalingFactor = (Units.inchesToMeters(4)*Math.PI);
-    public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(4)*Math.PI)/60;
+    public static final double kEncoderVelocityScalingFactor = (Units.inchesToMeters(4)*Math.PI)/60.0;
     public static final int kFilterDepth_CNT = 8;
     public static final int kFilterPeriod_MS = 8;
 
@@ -179,10 +184,10 @@ public final class Constants {
     public static final int kMotorCurrentLimit_AMP = 30;
 
     //encoder constants
-    public static final double kRollerHallSensorVelcityConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5);
-    public static final double kRollerHallSensorPositionConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5*60);
-    public static final double kMovementHallSensorPositionConversionFactor = 360/(20);
-    public static final double kMovementHallSensorVelocityConversionFactor = 360/(20*60);
+    public static final double kRollerHallSensorVelcityConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5.0);
+    public static final double kRollerHallSensorPositionConversionFactor = (Units.inchesToMeters(2)*Math.PI)/((double)(5.0*60.0));
+    public static final double kMovementHallSensorPositionConversionFactor = 360/(20.0);
+    public static final double kMovementHallSensorVelocityConversionFactor = 360/(20.0*60.0);
     public static final int kMovementAbsEncoderPort = 5; //3pin with white wire
     public static final double kMovementAbsEncoderDistancePerRoatation = 360;
 

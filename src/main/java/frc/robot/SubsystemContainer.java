@@ -53,20 +53,35 @@ public class SubsystemContainer {
 
     public final Command t_removeNote =
     new SequentialCommandGroup(
-        intakeSubsystem.setIdling().repeatedly().withTimeout(0.2),
         intakeSubsystem.removeNote().repeatedly()
     );
 
 
     //AUTON Commands, a_
+    // public final Command a_shootStraight = 
+    // new ParallelRaceGroup(
+    //   driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
+    //   new SequentialCommandGroup(
+    //     shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()),
+    //     new ParallelCommandGroup(
+    //       intakeSubsystem.setHandoff().repeatedly(),
+    //       shooterSubsystem.setFireLow().repeatedly()
+    //     ).withTimeout(2.5),
+    //     new ParallelCommandGroup(
+    //       shooterSubsystem.setDisabled(),
+    //       intakeSubsystem.setPrepHandoff()
+    //     )
+    //   )
+    //  );
+
     public final Command a_shootStraight = 
     new ParallelRaceGroup(
       driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
       new SequentialCommandGroup(
         shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()),
         new ParallelCommandGroup(
-          intakeSubsystem.setHandoff().repeatedly(),
-          shooterSubsystem.setFireLow().repeatedly()
+          intakeSubsystem.removeNote().repeatedly(),
+          shooterSubsystem.setDisabled().repeatedly()
         ).withTimeout(2.5),
         new ParallelCommandGroup(
           shooterSubsystem.setDisabled(),
@@ -83,7 +98,10 @@ public class SubsystemContainer {
         new SequentialCommandGroup(
           intakeSubsystem.setIntake().repeatedly().withTimeout(2),
           shooterSubsystem.setDisabled()
-        ).withTimeout(1),
+        )
+    );
+    public final Command a_intakeReturn = 
+    new SequentialCommandGroup(
         new ParallelRaceGroup(
           intakeSubsystem.setPrepHandoff().repeatedly(),
           shooterSubsystem.setHandoffAllowance()
@@ -92,7 +110,7 @@ public class SubsystemContainer {
           intakeSubsystem.setPrepHandoff(),
           shooterSubsystem.setDisabled()
         )
-      );
+    );
     public SendableChooser<Command> a_waitChooser(){
 
       SendableChooser<Command> waitChooser = new SendableChooser<>();
