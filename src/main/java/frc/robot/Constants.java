@@ -152,7 +152,7 @@ public final class Constants {
     //subsystem config
     public static final boolean kUseAbsoluteEncoder = true;
     //public static final boolean kUseSmartMoveNRollDrive = false;
-    public static final double kConfirmNoteOwningDelay_SEC = 0.1;
+    public static final double kConfirmNoteOwningDelay_SEC = 0.5;
     // public static final double kGoalIntakeSpeed_MPS =  -0.25;
     // public static final double kGoalHandoffSpeed_MPS = .8;
     public static final double kHandoffTime_SEC = 1;
@@ -192,6 +192,7 @@ public final class Constants {
     public static final double kMovementAbsEncoderDistancePerRoatation = 360;
 
     //sensor constants
+    public static final int kRetroSensorPort = 6;
     public static final int kRightLimitSwitchPort = 7;
     public static final int kMiddleLimitSwitchPort = 8;
     public static final int kLeftLimitSwitchPort = 9;
@@ -223,6 +224,6 @@ public final class Constants {
   }
 
   public static class LEDSubsystemConstants {
-
+    public static final int kLEDPWMPort = 9;
   }
 }
