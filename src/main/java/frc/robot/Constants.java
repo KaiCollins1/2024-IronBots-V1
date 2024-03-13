@@ -116,7 +116,7 @@ public final class Constants {
 
     //subsystem config
     public static final boolean kUseSetSpeedSmart = true;
-    public static final double kHandoffAllowanceSpeed_MPS = 5;
+    public static final double kHandoffAllowanceSpeed_MPS = 10;
     public static final double kHandoffAllowanceTime_SEC = 1;
     public static final double kGoalSpeedLow_MPS = 11.5;
     public static final double kGoalSpeedHigh_MPS = 13.5;
@@ -152,11 +152,11 @@ public final class Constants {
     //subsystem config
     public static final boolean kUseAbsoluteEncoder = true;
     //public static final boolean kUseSmartMoveNRollDrive = false;
-    public static final double kConfirmNoteOwningDelay_SEC = 0.5;
+    public static final double kConfirmNoteOwningDelay_SEC = .4;
     // public static final double kGoalIntakeSpeed_MPS =  -0.25;
     // public static final double kGoalHandoffSpeed_MPS = .8;
     public static final double kHandoffTime_SEC = 1;
-    public static final double kGoalIntakeSpeed_MPS =  -(1.5)*(60);
+    public static final double kGoalIntakeSpeed_MPS =  -(5)*(60);
     public static final double kGoalHandoffSpeed_MPS = (5)*(60);
 
     public static final double kInsideBotPos_DEG = 280-1;

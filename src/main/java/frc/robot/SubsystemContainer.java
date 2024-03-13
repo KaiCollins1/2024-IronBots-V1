@@ -31,7 +31,7 @@ public class SubsystemContainer {
     public SubsystemContainer(){}
 
     //TELOP Commands, t_
-    public final Command t_intakeNote = intakeSubsystem.setIntake();
+    // public final Command t_intakeNote = intakeSubsystem.setIntake().alongWith(shooterSubsystem.setHandoffAllowance());
     public final Command t_climberUp = climberSubsystem.raiseClimber().repeatedly();
     public final Command t_climberDown = climberSubsystem.lowerClimber().repeatedly();
     
@@ -39,6 +39,18 @@ public class SubsystemContainer {
     new ParallelCommandGroup(
         intakeSubsystem.setPrepHandoff(),
         shooterSubsystem.setHandoffAllowance()
+    );
+
+    public final Command t_intakeNote = 
+    new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        intakeSubsystem.setIntake(),
+        shooterSubsystem.setHandoffAllowance()
+      ),
+      new ParallelCommandGroup(
+        intakeSubsystem.setPrepHandoff(),
+        shooterSubsystem.setHandoffAllowance()
+      ).repeatedly()
     );
 
     public final Command t_shootNote =
@@ -149,10 +161,10 @@ public class SubsystemContainer {
     //SYSID Commands, s_
     public void s_bindSysIDCommands(CommandXboxController sysIDController){
         // Bind full set of SysId routine tests to buttons; a complete routine should run each of these once.
-        sysIDController.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        sysIDController.b().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        sysIDController.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        sysIDController.y().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // sysIDController.b().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // sysIDController.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // sysIDController.y().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         
         // sysIDController.a().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         // sysIDController.b().whileTrue(shooterSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));

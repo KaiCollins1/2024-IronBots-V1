@@ -84,8 +84,11 @@ public class IntakeSubsystem extends SubsystemBase {
     middleLimitSwitch = new DigitalInput(IntakeSubsystemConstants.kMiddleLimitSwitchPort);
     leftLimitSwitch = new DigitalInput(IntakeSubsystemConstants.kLeftLimitSwitchPort);
 
+    // hasNote = new Trigger(() -> 
+    //   (!rightLimitSwitch.get() || !middleLimitSwitch.get() || !leftLimitSwitch.get())
+    // ).debounce(IntakeSubsystemConstants.kConfirmNoteOwningDelay_SEC);
     hasNote = new Trigger(() -> 
-      (!rightLimitSwitch.get() || !middleLimitSwitch.get() || !leftLimitSwitch.get())
+      (!retroSensor.get())
     ).debounce(IntakeSubsystemConstants.kConfirmNoteOwningDelay_SEC);
 
   }
@@ -94,23 +97,21 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     
-    double temp = movementPID.calculate(getAngle(), intakeSetpoint_DEG);
-    movementMotor.setVoltage(temp);
+    movementMotor.setVoltage(movementPID.calculate(getAngle(), intakeSetpoint_DEG));
     rollerMotor.setVoltage(
      rollerFeedforward.calculate(rollerSetpoint_MPS)+
      rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
     );
 
     
-    // SmartDashboard.putData("IntakeSubsystem", this);
+    SmartDashboard.putData("IntakeSubsystem", this);
     // SmartDashboard.putNumber("Intake Angle", intakeSetpoint_DEG);
-    // SmartDashboard.putNumber("tempWhatIntakeSays2222", temp);
     // SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());
     SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
     SmartDashboard.putBoolean("middleLimit", !middleLimitSwitch.get());
     SmartDashboard.putBoolean("rightLimit", !rightLimitSwitch.get());
 
-    SmartDashboard.putBoolean("RETRO BOI", retroSensor.get());
+    SmartDashboard.putBoolean("RETRO BOI", !retroSensor.get());
     SmartDashboard.putBoolean("Has Note?", hasNote.getAsBoolean());
 
   }
@@ -139,15 +140,15 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command setIntake(){
-    return runOnce(() -> {
+    return run(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
       // intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
-    }).unless(hasNote).repeatedly().until(hasNote).withName("intaking");
+    }).until(hasNote).withName("intaking");
   }
 
   public Command removeNote(){
-    return this.setIdling().repeatedly().withTimeout(0.4).andThen(runOnce(() -> {
+    return this.setIdling().repeatedly().withTimeout(0.4).andThen(run(() -> {
       intakeSetpoint_DEG = (IntakeSubsystemConstants.kIntakingPos_DEG+IntakeSubsystemConstants.kIdlePos_DEG)/2;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
     })).withName("REMOVE"); 
