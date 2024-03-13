@@ -63,13 +63,13 @@ public class SubsystemContainer {
       driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
       new SequentialCommandGroup(
         new ParallelCommandGroup(
-          shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()),
-          new WaitCommand(0.5)
+          shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()).withTimeout(1),
+          new WaitCommand(0.75)
         ),
         new ParallelCommandGroup(
           intakeSubsystem.setHandoff().repeatedly(),
           shooterSubsystem.setFireLow().repeatedly()
-        ).withTimeout(2.5),
+        ).withTimeout(1),
         new ParallelCommandGroup(
           shooterSubsystem.setDisabled(),
           intakeSubsystem.setPrepHandoff()
