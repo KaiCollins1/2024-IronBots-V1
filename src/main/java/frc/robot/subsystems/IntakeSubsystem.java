@@ -55,6 +55,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private double intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
   private double rollerSetpoint_MPS = 0;
 
+  private DigitalInput retroSensor;
   private DigitalInput rightLimitSwitch;
   private DigitalInput middleLimitSwitch;
   private DigitalInput leftLimitSwitch;
@@ -78,6 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     motorConfig();
 
+    retroSensor = new DigitalInput(IntakeSubsystemConstants.kRetroSensorPort);
     rightLimitSwitch = new DigitalInput(IntakeSubsystemConstants.kRightLimitSwitchPort);
     middleLimitSwitch = new DigitalInput(IntakeSubsystemConstants.kMiddleLimitSwitchPort);
     leftLimitSwitch = new DigitalInput(IntakeSubsystemConstants.kLeftLimitSwitchPort);
@@ -100,13 +102,16 @@ public class IntakeSubsystem extends SubsystemBase {
     );
 
     
-    SmartDashboard.putData("IntakeSubsystem", this);
-    SmartDashboard.putNumber("Intake Angle", intakeSetpoint_DEG);
-    SmartDashboard.putNumber("tempWhatIntakeSays2222", temp);
-    SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());
+    // SmartDashboard.putData("IntakeSubsystem", this);
+    // SmartDashboard.putNumber("Intake Angle", intakeSetpoint_DEG);
+    // SmartDashboard.putNumber("tempWhatIntakeSays2222", temp);
+    // SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());
     SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
     SmartDashboard.putBoolean("middleLimit", !middleLimitSwitch.get());
     SmartDashboard.putBoolean("rightLimit", !rightLimitSwitch.get());
+
+    SmartDashboard.putBoolean("RETRO BOI", retroSensor.get());
+    SmartDashboard.putBoolean("Has Note?", hasNote.getAsBoolean());
 
   }
 
@@ -138,7 +143,7 @@ public class IntakeSubsystem extends SubsystemBase {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
       // intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
-    }).unless(hasNote).repeatedly().withName("intaking");
+    }).unless(hasNote).repeatedly().until(hasNote).withName("intaking");
   }
 
   public Command removeNote(){
