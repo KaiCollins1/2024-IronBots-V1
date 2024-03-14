@@ -69,15 +69,34 @@ public class SubsystemContainer {
     );
 
 
-    //AUTON Commands, a_
+    // AUTON Commands, a_
+    public final Command a_shootStraight = 
+    new ParallelRaceGroup(
+      driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()).withTimeout(1),
+          new WaitCommand(0.75)
+        ),
+        new ParallelCommandGroup(
+          intakeSubsystem.setHandoff().repeatedly(),
+          shooterSubsystem.setFireLow().repeatedly()
+        ).withTimeout(1),
+        new ParallelCommandGroup(
+          shooterSubsystem.setDisabled(),
+          intakeSubsystem.setPrepHandoff()
+        )
+      )
+    );
+
     // public final Command a_shootStraight = 
     // new ParallelRaceGroup(
     //   driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
     //   new SequentialCommandGroup(
     //     shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()),
     //     new ParallelCommandGroup(
-    //       intakeSubsystem.setHandoff().repeatedly(),
-    //       shooterSubsystem.setFireLow().repeatedly()
+    //       intakeSubsystem.removeNote().repeatedly(),
+    //       shooterSubsystem.setDisabled().repeatedly()
     //     ).withTimeout(2.5),
     //     new ParallelCommandGroup(
     //       shooterSubsystem.setDisabled(),
@@ -85,22 +104,6 @@ public class SubsystemContainer {
     //     )
     //   )
     //  );
-
-    public final Command a_shootStraight = 
-    new ParallelRaceGroup(
-      driveSubsystem.confirmShootingPosition().repeatedly().withTimeout(3.5),
-      new SequentialCommandGroup(
-        shooterSubsystem.setFireLow().repeatedly().until(shooterSubsystem.velocityAboveLowGoal()),
-        new ParallelCommandGroup(
-          intakeSubsystem.removeNote().repeatedly(),
-          shooterSubsystem.setDisabled().repeatedly()
-        ).withTimeout(2.5),
-        new ParallelCommandGroup(
-          shooterSubsystem.setDisabled(),
-          intakeSubsystem.setPrepHandoff()
-        )
-      )
-     );
 
     public final Command a_satisfyDDMW =
         driveSubsystem.doNothing().repeatedly();

@@ -30,7 +30,7 @@ public final class Constants {
     //major drive config changes
     public static final boolean kUseSmartTeleopDrive = false;
     public static final boolean kUseQuadEncoders = false;
-    public static final double kConfirmShootDriveSpeed_PCT = 0.2;
+    public static final double kConfirmShootDriveSpeed_PCT = 0.15;
     public static final double kConfirmShootDriveLength_SEC = 1.5;
     public static final double kMaxDriveVelocity_MPS = 4*(0.2);
     public static final double kMaxDriveRotations_RADPS = 0.15;
