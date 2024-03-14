@@ -20,6 +20,7 @@ import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ShooterSubsystemConstants;
 
@@ -51,6 +52,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private double speedSetpoint_MPS = 0;
 
+  private Trigger debounceLowSpeed;
+
   // Create the URCL compatable SysId routine
   private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(Volts.per(Seconds).of(0.8), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty, //we are not using advantage kit so we can just leave this empty
@@ -70,6 +73,10 @@ public class ShooterSubsystem extends SubsystemBase {
     motorConfig();
 
     SmartDashboard.putData("ShooterSubsystem", this);
+
+    debounceLowSpeed = new Trigger(
+      () -> getAvgSpeed() >= (ShooterSubsystemConstants.kGoalSpeedLow_MPS) - 3
+    ).debounce(0.1);
 
   }
 
@@ -118,7 +125,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public BooleanSupplier velocityAboveLowGoal(){
-    return () -> getAvgSpeed() >= (ShooterSubsystemConstants.kGoalSpeedHigh_MPS) - 3;
+    return debounceLowSpeed;
   }
 
   public double getAvgSpeed(){
