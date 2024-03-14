@@ -34,6 +34,7 @@ public class SubsystemContainer {
     // public final Command t_intakeNote = intakeSubsystem.setIntake().alongWith(shooterSubsystem.setHandoffAllowance());
     public final Command t_climberUp = climberSubsystem.raiseClimber().repeatedly();
     public final Command t_climberDown = climberSubsystem.lowerClimber().repeatedly();
+    public final Command t_adjustIntake = intakeSubsystem.adjustIntake();
     
     public final Command t_handoffNote = 
     new ParallelCommandGroup(
@@ -110,11 +111,16 @@ public class SubsystemContainer {
     
     public final Command a_intakeCollect =
     new SequentialCommandGroup(
-        new SequentialCommandGroup(
-          intakeSubsystem.setIntake().repeatedly().withTimeout(2),
-          shooterSubsystem.setDisabled()
-        )
+      new ParallelCommandGroup(
+        intakeSubsystem.setIntake(),
+        shooterSubsystem.setHandoffAllowance()
+      ),
+      new ParallelCommandGroup(
+        intakeSubsystem.setPrepHandoff(),
+        shooterSubsystem.setHandoffAllowance()
+      ).repeatedly()
     );
+    
     public final Command a_intakeReturn = 
     new SequentialCommandGroup(
         new ParallelRaceGroup(

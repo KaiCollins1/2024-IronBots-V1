@@ -12,6 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.Measure;
@@ -62,6 +63,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private Trigger hasNote;
 
+  private double movementVoltage;
+
   // Create the URCL compatable SysId routine
   private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(Volts.per(Seconds).of(0.8), Volts.of(7), Seconds.of(10)),//we are not using advantage kit so we can just leave this empty, //we are not using advantage kit so we can just leave this empty
@@ -96,8 +99,11 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    movementVoltage = movementPID.calculate(getAngle(), intakeSetpoint_DEG);
+    movementVoltage = MathUtil.clamp(movementVoltage, -IntakeSubsystemConstants.kAllowableMovementVoltage, IntakeSubsystemConstants.kAllowableMovementVoltage);
+    movementMotor.setVoltage(movementVoltage);
     
-    movementMotor.setVoltage(movementPID.calculate(getAngle(), intakeSetpoint_DEG));
     rollerMotor.setVoltage(
      rollerFeedforward.calculate(rollerSetpoint_MPS)+
      rollerPID.calculate(rollerHallSensor.getVelocity(), rollerSetpoint_MPS)
@@ -105,8 +111,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     
     SmartDashboard.putData("IntakeSubsystem", this);
-    // SmartDashboard.putNumber("Intake Angle", intakeSetpoint_DEG);
-    // SmartDashboard.putNumber("Roller Speed", rollerHallSensor.getVelocity());
+    SmartDashboard.putNumber("Intake Angle", getAngle());
+    SmartDashboard.putNumber("MoveVoltage", movementVoltage);
     SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
     SmartDashboard.putBoolean("middleLimit", !middleLimitSwitch.get());
     SmartDashboard.putBoolean("rightLimit", !rightLimitSwitch.get());
@@ -147,6 +153,13 @@ public class IntakeSubsystem extends SubsystemBase {
     }).until(hasNote).withName("intaking");
   }
 
+  public Command adjustIntake(){
+    return run(() -> {
+      intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
+      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS/4;
+    }).withName("adjusting");
+  }
+
   public Command removeNote(){
     return this.setIdling().repeatedly().withTimeout(0.4).andThen(run(() -> {
       intakeSetpoint_DEG = (IntakeSubsystemConstants.kIntakingPos_DEG+IntakeSubsystemConstants.kIdlePos_DEG)/2;
@@ -167,6 +180,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // }
 
   private double getAngle(){
+
     return IntakeSubsystemConstants.kUseAbsoluteEncoder ? movementAbsEncoder.getDistance() : movementHallSensor.getPosition();
   }
 

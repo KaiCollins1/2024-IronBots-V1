@@ -152,7 +152,8 @@ public final class Constants {
     //subsystem config
     public static final boolean kUseAbsoluteEncoder = true;
     //public static final boolean kUseSmartMoveNRollDrive = false;
-    public static final double kConfirmNoteOwningDelay_SEC = .4;
+    public static final double kConfirmNoteOwningDelay_SEC = .26;
+    public static final int kAllowableMovementVoltage = 8;
     // public static final double kGoalIntakeSpeed_MPS =  -0.25;
     // public static final double kGoalHandoffSpeed_MPS = .8;
     public static final double kHandoffTime_SEC = 1;
