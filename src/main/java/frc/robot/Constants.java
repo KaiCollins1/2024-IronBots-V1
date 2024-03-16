@@ -34,7 +34,7 @@ public final class Constants {
     public static final double kConfirmShootDriveLength_SEC = 1.5;
     public static final double kMaxDriveVelocity_MPS = 4*(0.2);
     public static final double kMaxDriveRotations_RADPS = 0.15;
-    public static final int kMotorCurrentLimit_AMP = 58;
+    public static final int kMotorCurrentLimit_AMP = 45;
     
 
     // //feedforward constants
@@ -116,7 +116,7 @@ public final class Constants {
 
     //subsystem config
     public static final boolean kUseSetSpeedSmart = true;
-    public static final double kHandoffAllowanceSpeed_MPS = 10;
+    public static final double kHandoffAllowanceSpeed_MPS = 9;
     public static final double kHandoffAllowanceTime_SEC = 1;
     public static final double kGoalSpeedLow_MPS = 11.5;
     public static final double kGoalSpeedHigh_MPS = 13.5;
@@ -152,12 +152,12 @@ public final class Constants {
     //subsystem config
     public static final boolean kUseAbsoluteEncoder = true;
     //public static final boolean kUseSmartMoveNRollDrive = false;
-    public static final double kConfirmNoteOwningDelay_SEC = .26;
+    public static final double kConfirmNoteOwningDelay_SEC = .22;
     public static final int kAllowableMovementVoltage = 8;
     // public static final double kGoalIntakeSpeed_MPS =  -0.25;
     // public static final double kGoalHandoffSpeed_MPS = .8;
     public static final double kHandoffTime_SEC = 1;
-    public static final double kGoalIntakeSpeed_MPS =  -(5)*(60);
+    public static final double kGoalIntakeSpeed_MPS =  -(4)*(60);
     public static final double kGoalHandoffSpeed_MPS = (5)*(60);
 
     public static final double kInsideBotPos_DEG = 280-1;
@@ -182,14 +182,15 @@ public final class Constants {
     public static final boolean kRollerMotorReversed = true;
     public static final int kMovementMotorID = 10;
     public static final int kRollerMotorID = 11;
-    public static final int kMotorCurrentLimit_AMP = 30;
+    public static final int kRollerCurrentLimit_AMP = 30;
+    public static final int kMoveCurrentLimit_AMP = 30;
 
     //encoder constants
     public static final double kRollerHallSensorVelcityConversionFactor = (Units.inchesToMeters(2)*Math.PI)/(5.0);
     public static final double kRollerHallSensorPositionConversionFactor = (Units.inchesToMeters(2)*Math.PI)/((double)(5.0*60.0));
     public static final double kMovementHallSensorPositionConversionFactor = 360/(20.0);
     public static final double kMovementHallSensorVelocityConversionFactor = 360/(20.0*60.0);
-    public static final int kMovementAbsEncoderPort = 5; //3pin with white wire
+    public static final int kMovementAbsEncoderPort = 4; //3pin with white wire
     public static final double kMovementAbsEncoderDistancePerRoatation = 360;
 
     //sensor constants

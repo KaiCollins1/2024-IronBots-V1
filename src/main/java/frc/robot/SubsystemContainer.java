@@ -35,6 +35,8 @@ public class SubsystemContainer {
     public final Command t_climberUp = climberSubsystem.raiseClimber().repeatedly();
     public final Command t_climberDown = climberSubsystem.lowerClimber().repeatedly();
     public final Command t_adjustIntake = intakeSubsystem.adjustIntake();
+    public final Command t_activatePain = intakeSubsystem.switchToPainMode();
+    public final Command t_pausePain = intakeSubsystem.deactivatePainMove();
     
     public final Command t_handoffNote = 
     new ParallelCommandGroup(

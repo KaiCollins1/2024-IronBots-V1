@@ -135,11 +135,11 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     // This method will be called once per scheduler run
     drivePose = driveOdometry.update(gyro.getRotation2d(), getAvgLeftPosition(), getAvgRightPosition());
     fieldPose.setRobotPose(drivePose);
-    SmartDashboard.putData("DriveSubsystem", this);
-    SmartDashboard.putNumber("driveAngle", drivePose.getRotation().getDegrees());
-    SmartDashboard.putData("FieldPosition", fieldPose);
-    SmartDashboard.putNumber("LeftSpeed", getAvgLeftVelocity());
-    SmartDashboard.putNumber("RightSpeed", getAvgRightVelocity());
+    // SmartDashboard.putData("DriveSubsystem", this);
+    // SmartDashboard.putNumber("driveAngle", drivePose.getRotation().getDegrees());
+    // SmartDashboard.putData("FieldPosition", fieldPose);
+    // SmartDashboard.putNumber("LeftSpeed", getAvgLeftVelocity());
+    // SmartDashboard.putNumber("RightSpeed", getAvgRightVelocity());
     // SmartDashboard.putNumber("rotSpeedRADPS", Units.DegreesPerSecond.of(gyro.getRate()).in(RadiansPerSecond));
   }
 

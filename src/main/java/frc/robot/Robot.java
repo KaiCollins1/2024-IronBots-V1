@@ -52,7 +52,8 @@ public class Robot extends TimedRobot {
     driverController.leftBumper().whileTrue(systemContainer.t_shootNote);
     driverController.x().whileTrue(systemContainer.t_removeNote);
     driverController.a().whileTrue(systemContainer.t_adjustIntake);
-    // driverController.y().whileTrue(systemContainer.t_climberUp);
+    driverController.y().whileTrue(systemContainer.t_climberUp);
+    driverController.b().whileTrue(systemContainer.t_activatePain).onFalse(systemContainer.t_pausePain);
 
     systemContainer.d_setDefaultCommands(driverController);
 

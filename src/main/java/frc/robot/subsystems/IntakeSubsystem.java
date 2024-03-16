@@ -63,6 +63,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private Trigger hasNote;
 
+  private boolean inPainMode = false;
+  private int painVoltage = 0;
+
   private double movementVoltage;
 
   // Create the URCL compatable SysId routine
@@ -100,7 +103,12 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    movementVoltage = movementPID.calculate(getAngle(), intakeSetpoint_DEG);
+    if(!inPainMode){
+      movementVoltage = movementPID.calculate(getAngle(), intakeSetpoint_DEG);
+    }else{
+      movementVoltage = painVoltage;
+    }
+
     movementVoltage = MathUtil.clamp(movementVoltage, -IntakeSubsystemConstants.kAllowableMovementVoltage, IntakeSubsystemConstants.kAllowableMovementVoltage);
     movementMotor.setVoltage(movementVoltage);
     
@@ -110,12 +118,13 @@ public class IntakeSubsystem extends SubsystemBase {
     );
 
     
-    SmartDashboard.putData("IntakeSubsystem", this);
+    // SmartDashboard.putData("IntakeSubsystem", this);
     SmartDashboard.putNumber("Intake Angle", getAngle());
-    SmartDashboard.putNumber("MoveVoltage", movementVoltage);
-    SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
-    SmartDashboard.putBoolean("middleLimit", !middleLimitSwitch.get());
-    SmartDashboard.putBoolean("rightLimit", !rightLimitSwitch.get());
+    SmartDashboard.putNumber("Intake altAngle", movementHallSensor.getPosition());
+    // SmartDashboard.putNumber("MoveVoltage", movementVoltage);
+    // SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
+    // SmartDashboard.putBoolean("middleLimit", !middleLimitSwitch.get());
+    // SmartDashboard.putBoolean("rightLimit", !rightLimitSwitch.get());
 
     SmartDashboard.putBoolean("RETRO BOI", !retroSensor.get());
     SmartDashboard.putBoolean("Has Note?", hasNote.getAsBoolean());
@@ -147,6 +156,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command setIntake(){
     return run(() -> {
+      inPainMode = false;
       intakeSetpoint_DEG = IntakeSubsystemConstants.kIntakingPos_DEG;
       // intakeSetpoint_DEG = IntakeSubsystemConstants.kIdlePos_DEG;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS;
@@ -156,7 +166,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command adjustIntake(){
     return run(() -> {
       intakeSetpoint_DEG = IntakeSubsystemConstants.kInsideBotPos_DEG;
-      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS/4;
+      rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalIntakeSpeed_MPS/8;
     }).withName("adjusting");
   }
 
@@ -165,6 +175,19 @@ public class IntakeSubsystem extends SubsystemBase {
       intakeSetpoint_DEG = (IntakeSubsystemConstants.kIntakingPos_DEG+IntakeSubsystemConstants.kIdlePos_DEG)/2;
       rollerSetpoint_MPS = IntakeSubsystemConstants.kGoalHandoffSpeed_MPS;
     })).withName("REMOVE"); 
+  }
+
+  public Command switchToPainMode(){
+    return runOnce(() -> {
+      painVoltage = 4;
+      inPainMode = true;
+      // movementAbsEncoder = new DutyCycleEncoder(IntakeSubsystemConstants.kMovementAbsEncoderPort);
+      // movementAbsEncoder.setDistancePerRotation(IntakeSubsystemConstants.kMovementAbsEncoderDistancePerRoatation);
+    }).withName("PAIN");
+  }
+
+  public Command deactivatePainMove(){
+    return runOnce(() -> painVoltage = 0);
   }
 
   // public Command autoCollectNote(){
@@ -208,8 +231,8 @@ public class IntakeSubsystem extends SubsystemBase {
     rollerMotor = new CANSparkMax(IntakeSubsystemConstants.kRollerMotorID, MotorType.kBrushless);
     movementMotor = new CANSparkMax(IntakeSubsystemConstants.kMovementMotorID, MotorType.kBrushless);
 
-    rollerMotor.setSmartCurrentLimit(IntakeSubsystemConstants.kMotorCurrentLimit_AMP);
-    movementMotor.setSmartCurrentLimit(IntakeSubsystemConstants.kMotorCurrentLimit_AMP);
+    rollerMotor.setSmartCurrentLimit(IntakeSubsystemConstants.kRollerCurrentLimit_AMP);
+    movementMotor.setSmartCurrentLimit(IntakeSubsystemConstants.kMoveCurrentLimit_AMP);
 
     rollerMotor.setInverted(IntakeSubsystemConstants.kRollerMotorReversed);
     movementMotor.setInverted(IntakeSubsystemConstants.kMovementMotorReversed);

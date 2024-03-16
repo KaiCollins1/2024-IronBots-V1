@@ -50,6 +50,9 @@ public class ShooterSubsystem extends SubsystemBase {
     ShooterSubsystemConstants.kD
   );
 
+  private double topVoltage = 0;
+  private double bottomVoltage = 0;
+
   private double speedSetpoint_MPS = 0;
 
   private Trigger debounceLowSpeed;
@@ -75,21 +78,31 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putData("ShooterSubsystem", this);
 
     debounceLowSpeed = new Trigger(
-      () -> getAvgSpeed() >= (ShooterSubsystemConstants.kGoalSpeedLow_MPS) - 3
+      () -> getAvgSpeed() >= (ShooterSubsystemConstants.kGoalSpeedLow_MPS) - 2
     ).debounce(0.1);
 
   }
 
   @Override
   public void periodic() {
-    topMotor.setVoltage(
-      feedforward.calculate(speedSetpoint_MPS)+
-      topPID.calculate(topEncoder.getVelocity(), speedSetpoint_MPS)
-    );
-    bottomMotor.setVoltage(
-      feedforward.calculate(speedSetpoint_MPS)+
-      bottomPID.calculate(bottomEncoder.getVelocity(), speedSetpoint_MPS)
-    );
+    if(speedSetpoint_MPS == 0){
+      topVoltage = 0;
+      bottomVoltage = 0;
+    }else{
+      topVoltage = 
+        feedforward.calculate(speedSetpoint_MPS)+
+        topPID.calculate(topEncoder.getVelocity(), speedSetpoint_MPS);
+      bottomVoltage =
+        feedforward.calculate(speedSetpoint_MPS)+
+        bottomPID.calculate(bottomEncoder.getVelocity(), speedSetpoint_MPS);
+    }
+    
+    topMotor.setVoltage(topVoltage);
+    bottomMotor.setVoltage(bottomVoltage);
+    SmartDashboard.putNumber("shooterTop", topVoltage);
+    SmartDashboard.putNumber("shooterLow", bottomVoltage);
+    SmartDashboard.putNumber("shooterSetpoint", speedSetpoint_MPS);
+
   }
 
   public Command setFireHigh(){
