@@ -103,11 +103,18 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
+    // if( 279 < movementAbsEncoder.get() && movementAbsEncoder.get() < 282)
+    //   movementHallSensor.setPosition(movementAbsEncoder.get());
+    
+    
+
     if(!inPainMode){
       movementVoltage = movementPID.calculate(getAngle(), intakeSetpoint_DEG);
-    }else{
+    }
+    else{
       movementVoltage = painVoltage;
     }
+    
 
     movementVoltage = MathUtil.clamp(movementVoltage, -IntakeSubsystemConstants.kAllowableMovementVoltage, IntakeSubsystemConstants.kAllowableMovementVoltage);
     movementMotor.setVoltage(movementVoltage);
@@ -119,7 +126,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     
     // SmartDashboard.putData("IntakeSubsystem", this);
-    SmartDashboard.putNumber("Intake Angle", getAngle());
+    // SmartDashboard.putNumber("Intake Angle", getAngle());
     SmartDashboard.putNumber("Intake altAngle", movementHallSensor.getPosition());
     // SmartDashboard.putNumber("MoveVoltage", movementVoltage);
     // SmartDashboard.putBoolean("leftLimit", !leftLimitSwitch.get());
@@ -186,6 +193,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }).withName("PAIN");
   }
 
+  
+
   public Command deactivatePainMove(){
     return runOnce(() -> painVoltage = 0);
   }
@@ -202,9 +211,14 @@ public class IntakeSubsystem extends SubsystemBase {
   //   return hasNote.getAsBoolean();
   // }
 
+  // private double getAngle(){
+  //   return IntakeSubsystemConstants.kUseAbsoluteEncoder ? movementAbsEncoder.getDistance() : movementHallSensor.getPosition();
+  // 
   private double getAngle(){
-
-    return IntakeSubsystemConstants.kUseAbsoluteEncoder ? movementAbsEncoder.getDistance() : movementHallSensor.getPosition();
+    //if our encoder decides to offset itself by 360 degrees again just try and rectify it
+    double tempAngle = movementAbsEncoder.getDistance();
+    return tempAngle -
+    (tempAngle > 300 ? 360 : 0);
   }
 
   // public Command tempDefaultCommand(BooleanSupplier upBtn, BooleanSupplier dwnBtn, BooleanSupplier inBtn, BooleanSupplier outBtn){

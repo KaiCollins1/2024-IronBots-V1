@@ -66,8 +66,8 @@ public class Robot extends TimedRobot {
     NamedCommands.registerCommand("TempReturnNoteDrive", systemContainer.a_tempReturnNoteDrive);
     NamedCommands.registerCommand("satisfyDDMW", systemContainer.a_satisfyDDMW);
 
-    waitChooser = systemContainer.a_waitChooser();
-    SmartDashboard.putData("Wait Chooser", waitChooser);
+    // waitChooser = systemContainer.a_waitChooser();
+    // SmartDashboard.putData("Wait Chooser", waitChooser);
 
     //AutoBuilder gets these from the deploy directory. To clear it, follow these directions:
     //To FTP to the roboRIO, open a Windows Explorer window. In the address bar, 

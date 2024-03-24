@@ -158,7 +158,7 @@ private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
       run(
         () -> drive.arcadeDrive(
           driveLimiter.calculate(fwdSupplier.getAsDouble()), 
-          0.7 * rotSupplier.getAsDouble(), 
+          0.8 * rotSupplier.getAsDouble(), 
           true
         )
       ).withName("arcadeDriveDumb")
